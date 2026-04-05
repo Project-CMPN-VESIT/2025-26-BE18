@@ -56,6 +56,10 @@ INGRO builds an intelligent, layered system on top of INGRES that:
 
 ## System Architecture
 
+<p align="center">
+  <img src="architecture.png" alt="Demo" width="600" />
+</p>
+
 INGRO follows a modular architecture:
 
 ### 1. User Interaction Layer
