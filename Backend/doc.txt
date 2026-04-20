@@ -1,0 +1,12 @@
+# First activate a venv
+
+uv venv --python 3.12
+.venv/Scripts/activate
+
+
+
+# install agno paste below stuff (if not then install uv first)
+uv pip install -U agno
+
+
+

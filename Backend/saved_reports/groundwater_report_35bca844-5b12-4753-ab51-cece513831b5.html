@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalyan Groundwater Analysis</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        /* Custom styles for dark mode and scrollbar if needed */
+        body {
+            background-color: #1a202c; /* Tailwind dark mode bg-gray-900 */
+            color: #e2e8f0; /* Tailwind dark mode text-gray-200 */
+        }
+        .container {
+            max-width: 1200px;
+        }
+        /* Chart.js tooltips can be hard to read in dark mode without custom styling */
+        .chartjs-tooltip {
+            background: rgba(30, 41, 59, 0.9); /* Dark background for tooltips */
+            color: #e2e8f0;
+            border-radius: 4px;
+            padding: 8px;
+            pointer-events: none;
+            position: absolute;
+            transform: translate(-50%, 0);
+            transition: all .1s ease;
+            z-index: 1000; /* Ensure tooltip is on top */
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-200 bg-gray-900 leading-normal tracking-wider">
+    <div class="container mx-auto p-4 md:p-8">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-blue-400 mb-2">Groundwater Level Analysis for Kalyan</h1>
+            <p class="text-lg md:text-xl text-gray-400">Understanding past trends and future outlook</p>
+        </header>
+
+        <section class="mb-10 p-6 bg-gray-800 rounded-lg shadow-xl">
+            <h2 class="text-3xl font-bold text-blue-300 mb-4">Executive Summary</h2>
+            <p class="text-gray-300 leading-relaxed">
+                Kalyan's groundwater situation has consistently been rated as <strong class="text-green-400">"Safe"</strong> across all available data years. This means the area effectively replenishes its groundwater reserves, exceeding the amount extracted for various uses. While there was a significantly higher rainfall and groundwater extraction (draft) in 2016-17, the trends from 2019-20 onwards show a relatively stable pattern of recharge and draft, with a slight, gradual decrease in recharge. Overall, the region maintains a healthy and sustainable groundwater balance.
+            </p>
+        </section>
+
+        <section class="mb-10 p-6 bg-gray-800 rounded-lg shadow-xl">
+            <h2 class="text-3xl font-bold text-blue-300 mb-4">Key Insights</h2>
+            <ul class="list-disc list-inside text-gray-300 space-y-2">
+                <li><strong>Consistently "Safe":</strong> Kalyan has consistently been in the "Safe" category, indicating that groundwater extraction is well within sustainable limits, and there's no immediate risk of over-extraction.</li>
+                <li><strong>Healthy Balance (Recharge vs. Draft):</strong> Groundwater <strong class="text-yellow-300">Recharge</strong> (water naturally refilling the ground) has always been much higher than the <strong class="text-red-300">Draft</strong> (water extracted), ensuring a continuous and healthy supply.</li>
+                <li><strong>Significant Shift in 2016-17:</strong> The year 2016-17 stands out with exceptionally high rainfall (over 6300 mm) and a much higher draft (around 394 Million Cubic Meters - MCM) compared to subsequent years. This suggests a unique hydrological or usage pattern during that period.</li>
+                <li><strong>Recent Stability (2019-20 onwards):</strong> From 2019-20 to 2024-25, rainfall figures are shown as constant (around 2491 mm). During this period, groundwater recharge shows a slight but gradual downward trend (from ~866 MCM to ~851 MCM), while draft remains relatively stable (around 163-165 MCM).</li>
+                <li><strong>Sustainability:</strong> Despite the slight decrease in recharge in recent years, the overall balance remains strongly positive, confirming the area's sustainable groundwater use.</li>
+            </ul>
+        </section>
+
+        <section class="mb-10 p-6 bg-gray-800 rounded-lg shadow-xl">
+            <h2 class="text-3xl font-bold text-blue-300 mb-4">Groundwater Trends Over Years</h2>
+            <p class="text-gray-300 mb-6">Here's a detailed look at Kalyan's groundwater data for available years:</p>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-gray-700 rounded-lg overflow-hidden">
+                    <thead>
+                        <tr class="bg-gray-600 text-left text-gray-200 uppercase text-sm leading-normal">
+                            <th class="py-3 px-6">Year</th>
+                            <th class="py-3 px-6">Rainfall (mm)</th>
+                            <th class="py-3 px-6">Groundwater Recharge (MCM)</th>
+                            <th class="py-3 px-6">Groundwater Draft (MCM)</th>
+                            <th class="py-3 px-6">Status Category</th>
+                        </tr>
+                    </thead>
+                    <tbody id="groundwater-trends" class="text-gray-300 text-sm font-light">
+                        <!-- Data will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-gray-400 text-sm mt-4">
+                <strong class="text-yellow-400">Note:</strong> <br>
+                1. Data for certain years (e.g., 2017-18, 2018-19, 2020-21) is not available in the provided dataset.<br>
+                2. Rainfall data shows a constant value from 2019-20 onwards, which might be an average or estimate in the dataset rather than yearly measured variation.
+            </p>
+        </section>
+
+        <section class="mb-10 p-6 bg-gray-800 rounded-lg shadow-xl">
+            <h2 class="text-3xl font-bold text-blue-300 mb-4">Visualizing the Trends</h2>
+            <div class="relative h-96">
+                <canvas id="groundwaterChart"></canvas>
+            </div>
+        </section>
+
+        <section class="mb-10 p-6 bg-gray-800 rounded-lg shadow-xl">
+            <h2 class="text-3xl font-bold text-blue-300 mb-4">Prediction for Next Year (2025-26)</h2>
+            <p class="text-gray-300 mb-4 leading-relaxed">
+                Based on the recent trends from 2021-22 to 2024-25 (using averages for recharge and draft, and the consistent rainfall figure), here's an approximate prediction for Kalyan's groundwater levels for the year <strong class="text-blue-400">2025-26</strong>:
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                <div class="p-4 bg-gray-700 rounded-lg shadow-md">
+                    <p class="text-lg text-gray-400">Predicted Rainfall</p>
+                    <p class="text-4xl font-bold text-yellow-300" id="predicted-rainfall">~ 2492 mm</p>
+                </div>
+                <div class="p-4 bg-gray-700 rounded-lg shadow-md">
+                    <p class="text-lg text-gray-400">Predicted Recharge</p>
+                    <p class="text-4xl font-bold text-green-300" id="predicted-recharge">~ 856 MCM</p>
+                </div>
+                <div class="p-4 bg-gray-700 rounded-lg shadow-md">
+                    <p class="text-lg text-gray-400">Predicted Draft</p>
+                    <p class="text-4xl font-bold text-red-300" id="predicted-draft">~ 164 MCM</p>
+                </div>
+            </div>
+            <p class="text-gray-300 mt-6 leading-relaxed">
+                Given these predictions, Kalyan is expected to comfortably maintain its <strong class="text-green-400">"Safe" groundwater category</strong> for 2025-26. This indicates a continued healthy groundwater balance where replenishment surpasses extraction. Continued monitoring of recharge trends is advisable.
+            </p>
+        </section>
+
+        <footer class="text-center mt-12 p-4 text-gray-500 text-sm">
+            <p>&copy; 2024 Groundwater Analysis Dashboard</p>
+            <p>Data provided for Kalyan region.</p>
+        </footer>
+    </div>
+
+    <script>
+        const rawData = [
+            {"year": "2016-17", "data": {"locationName": "KALYAN", "color": null, "locUUID": "c8e8f67b-aecc-44cb-9f88-24b4130ee4bc", "rainfall": 6313.222273794217, "recharge": {"total": {"total": 851.5624531347067, "non_command": 851.5624531347067}}, "loss": null, "draft": {"total": {"total": 393.8338869508758, "non_command": 112.60401362432201}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 12643.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 12643.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "c8e8f67b-aecc-44cb-9f88-24b4130ee4bc", "draftData": {"total": {"total": 393.8338869508758, "non_command": 112.60401362432201}}, "rechargeData": {"total": {"total": 851.5624531347067, "non_command": 851.5624531347067}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2019-20", "data": {"locationName": "KALYAN", "color": null, "locUUID": "c8e8f67b-aecc-44cb-9f88-24b4130ee4bc", "rainfall": 2491.6267816182867, "recharge": {"total": {"total": 866.2515347524833, "non_command": 866.2515347524833}}, "loss": null, "draft": {"total": {"total": 163.03157911991744, "non_command": 163.03157911991744}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 12643.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 12643.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "c8e8f67b-aecc-44cb-9f88-24b4130ee4bc", "draftData": {"total": {"total": 163.03157911991744, "non_command": 163.03157911991744}}, "rechargeData": {"total": {"total": 866.2515347524833, "non_command": 866.2515347524833}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2021-22", "data": {"locationName": "KALYAN", "color": null, "locUUID": "12beae99-0184-44ba-8bfd-d783207cd130", "rainfall": 2491.6267816182867, "recharge": {"total": {"total": 860.4757444030656, "non_command": 860.4757444030656}}, "loss": null, "draft": {"total": {"total": 163.03157911991744, "non_command": 163.03157911991744}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 12643.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 12643.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "12beae99-0184-44ba-8bfd-d783207cd130", "draftData": {"total": {"total": 163.03157911991744, "non_command": 163.03157911991744}}, "rechargeData": {"total": {"total": 860.4757444030656, "non_command": 860.4757444030656}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2022-23", "data": {"locationName": "KALYAN", "color": null, "locUUID": "12beae99-0184-44ba-8bfd-d783207cd130", "rainfall": 2491.6267816182867, "recharge": {"total": {"total": 857.8280482884815, "non_command": 857.8280482884815}}, "loss": null, "draft": {"total": {"total": 163.6486116883268, "non_command": 163.6486116883268}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 12643.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 12643.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "12beae99-0184-44ba-8bfd-d783207cd130", "draftData": {"total": {"total": 163.6486116883268, "non_command": 163.6486116883268}}, "rechargeData": {"total": {"total": 857.8280482884815, "non_command": 857.8280482884815}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2023-24", "data": {"locationName": "Kalyan", "color": null, "locUUID": "763299b7-8e54-4d27-8df4-fd65f51f5dcd", "rainfall": 2491.6267816182867, "recharge": {"total": {"total": 854.742569953539, "non_command": 854.742569953539}}, "loss": null, "draft": {"total": {"total": 164.81080781808615, "non_command": 164.81080781808615}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 12643.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 12643.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "763299b7-8e54-4d27-8df4-fd65f51f5dcd", "draftData": {"total": {"total": 164.81080781808615, "non_command": 164.81080781808615}}, "rechargeData": {"total": {"total": 854.742569953539, "non_command": 854.742569953539}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2024-25", "data": {"locationName": "Kalyan", "color": null, "locUUID": "7a4b1a32-fd99-44c1-91c1-09ad23279c46", "rainfall": 2491.6267816182867, "recharge": {"total": {"total": 851.8980979853065, "non_command": 851.8980979853065}}, "loss": null, "draft": {"total": {"total": 162.67520578787762, "non_command": 162.67520578787762}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 12643.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 12643.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "7a4b1a32-fd99-44c1-91c1-09ad23279c46", "draftData": {"total": {"total": 162.67520578787762, "non_command": 162.67520578787762}}, "rechargeData": {"total": {"total": 851.8980979853065, "non_command": 851.8980979853065}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}
+        ];
+
+        // Process data
+        const processedData = rawData.map(item => ({
+            year: item.year,
+            rainfall: parseFloat(item.data.rainfall.toFixed(2)),
+            recharge: parseFloat(item.data.recharge.total.total.toFixed(2)),
+            draft: parseFloat(item.data.draft.total.total.toFixed(2)),
+            category: item.data.category.total
+        })).sort((a, b) => parseInt(a.year.substring(0, 4)) - parseInt(b.year.substring(0, 4))); // Sort by year
+
+        // Populate table
+        const tableBody = document.getElementById('groundwater-trends');
+        processedData.forEach(item => {
+            const row = tableBody.insertRow();
+            row.className = 'border-b border-gray-700 hover:bg-gray-700';
+            row.innerHTML = `
+                <td class="py-3 px-6">${item.year}</td>
+                <td class="py-3 px-6">${item.rainfall}</td>
+                <td class="py-3 px-6">${item.recharge}</td>
+                <td class="py-3 px-6">${item.draft}</td>
+                <td class="py-3 px-6"><span class="bg-green-700 text-green-100 py-1 px-3 rounded-full text-xs">${item.category.toUpperCase()}</span></td>
+            `;
+        });
+
+        // Chart.js data preparation
+        const years = processedData.map(item => item.year);
+        const rainfallData = processedData.map(item => item.rainfall);
+        const rechargeData = processedData.map(item => item.recharge);
+        const draftData = processedData.map(item => item.draft);
+
+        // Calculate prediction for 2025-26 using the last 4 available data points for average
+        // These are years 2021-22, 2022-23, 2023-24, 2024-25
+        const predictionPeriodRecharge = rechargeData.slice(-4);
+        const predictionPeriodDraft = draftData.slice(-4);
+
+        const predictedRecharge = predictionPeriodRecharge.reduce((sum, val) => sum + val, 0) / predictionPeriodRecharge.length;
+        const predictedDraft = predictionPeriodDraft.reduce((sum, val) => sum + val, 0) / predictionPeriodDraft.length;
+        const predictedRainfall = rainfallData[rainfallData.length - 1]; // Use last recorded rainfall, which is consistent for several years
+
+        document.getElementById('predicted-rainfall').innerText = `~ ${predictedRainfall.toFixed(0)} mm`;
+        document.getElementById('predicted-recharge').innerText = `~ ${predictedRecharge.toFixed(0)} MCM`;
+        document.getElementById('predicted-draft').innerText = `~ ${predictedDraft.toFixed(0)} MCM`;
+
+
+        // Chart.js configuration
+        const ctx = document.getElementById('groundwaterChart').getContext('2d');
+        const groundwaterChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [
+                    {
+                        label: 'Rainfall (mm)',
+                        data: rainfallData,
+                        borderColor: 'rgb(54, 162, 235)', // Blue
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        tension: 0.3,
+                        yAxisID: 'y-rainfall', // Unique ID for rainfall axis
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Groundwater Recharge (MCM)',
+                        data: rechargeData,
+                        borderColor: 'rgb(75, 192, 192)', // Greenish-blue
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.3,
+                        yAxisID: 'y-recharge-draft', // Unique ID for recharge/draft axis
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        borderWidth: 2
+                    },
+                    {
+                        label: 'Groundwater Draft (MCM)',
+                        data: draftData,
+                        borderColor: 'rgb(255, 99, 132)', // Red
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.3,
+                        yAxisID: 'y-recharge-draft', // Same ID as recharge
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        borderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Kalyan Groundwater Levels Over Years',
+                        color: '#e2e8f0', // Light gray for dark mode
+                        font: {
+                            size: 18
+                        }
+                    },
+                    legend: {
+                        labels: {
+                            color: '#e2e8f0', // Light gray for legend text
+                            font: {
+                                size: 14
+                            }
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'rgba(30, 41, 59, 0.9)', // Custom tooltip background
+                        titleColor: '#cbd5e0',
+                        bodyColor: '#e2e8f0',
+                        borderColor: '#4a5568',
+                        borderWidth: 1,
+                        padding: 10
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Year',
+                            color: '#a0aec0', // Gray for axis title
+                            font: {
+                                size: 14
+                            }
+                        },
+                        ticks: {
+                            color: '#cbd5e0' // Light gray for axis labels
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)' // Very faint grid lines
+                        }
+                    },
+                    'y-rainfall': { // Y-axis for Rainfall
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Rainfall (mm)',
+                            color: '#a0aec0',
+                            font: {
+                                size: 14
+                            }
+                        },
+                        ticks: {
+                            color: '#cbd5e0'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        }
+                    },
+                    'y-recharge-draft': { // Y-axis for Recharge and Draft
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Recharge/Draft (MCM)',
+                            color: '#a0aec0',
+                            font: {
+                                size: 14
+                            }
+                        },
+                        ticks: {
+                            color: '#cbd5e0'
+                        },
+                        grid: {
+                            drawOnChartArea: false, // Only draw grid lines for the first Y-axis
+                            color: 'rgba(255, 255, 255, 0.05)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

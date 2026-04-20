@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NAGOD Groundwater Report (Simple Explanation)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="bg-gray-100 text-gray-800">
+
+  <div class="max-w-6xl mx-auto p-6 space-y-8">
+
+    <!-- Title -->
+    <header>
+      <h1 class="text-3xl font-bold text-gray-900">Groundwater Status Report – NAGOD</h1>
+      <p class="text-gray-600 mt-2">
+        A simple explanation of groundwater availability and usage over three assessment years.
+      </p>
+    </header>
+
+    <!-- What this report is about -->
+    <section class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-3">What is this report about?</h2>
+      <p>
+        This report explains how much groundwater is available (recharge) and how much is being used
+        (draft) in the NAGOD area over three different years. Even though the area is still considered
+        <strong>safe</strong>, the numbers show small but important changes that need attention.
+      </p>
+    </section>
+
+    <!-- Key Findings -->
+    <section class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-3">Key Findings (In Simple Words)</h2>
+      <ul class="list-disc list-inside space-y-2">
+        <li>Groundwater recharge changes every year depending on rainfall and natural conditions.</li>
+        <li>Water usage (draft) is highest in non-command areas like private wells and borewells.</li>
+        <li>Even when groundwater status is marked as “Safe”, usage trends must be monitored.</li>
+        <li>One year shows higher extraction, which could become risky if repeated.</li>
+      </ul>
+    </section>
+
+    <!-- Charts -->
+    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+      <!-- Recharge Trend -->
+      <div class="bg-white rounded-lg shadow p-4">
+        <h3 class="font-semibold mb-2">Groundwater Recharge Over Years</h3>
+        <div class="relative h-64 w-full">
+          <canvas id="rechargeChart"></canvas>
+        </div>
+        <p class="text-sm text-gray-600 mt-2">
+          This chart shows how much groundwater was naturally added each year.
+        </p>
+      </div>
+
+      <!-- Draft Trend -->
+      <div class="bg-white rounded-lg shadow p-4">
+        <h3 class="font-semibold mb-2">Groundwater Usage (Draft) Over Years</h3>
+        <div class="relative h-64 w-full">
+          <canvas id="draftChart"></canvas>
+        </div>
+        <p class="text-sm text-gray-600 mt-2">
+          This chart shows how much groundwater people used each year.
+        </p>
+      </div>
+
+      <!-- Recharge Breakdown -->
+      <div class="bg-white rounded-lg shadow p-4">
+        <h3 class="font-semibold mb-2">Recharge Breakdown (Latest Year)</h3>
+        <div class="relative h-64 w-full">
+          <canvas id="rechargeBar"></canvas>
+        </div>
+        <p class="text-sm text-gray-600 mt-2">
+          Most recharge happens in non-command areas.
+        </p>
+      </div>
+
+      <!-- Draft Breakdown -->
+      <div class="bg-white rounded-lg shadow p-4">
+        <h3 class="font-semibold mb-2">Water Usage Breakdown (Latest Year)</h3>
+        <div class="relative h-64 w-full">
+          <canvas id="draftPie"></canvas>
+        </div>
+        <p class="text-sm text-gray-600 mt-2">
+          Almost all groundwater usage comes from non-command areas.
+        </p>
+      </div>
+
+    </section>
+
+    <!-- What does this mean -->
+    <section class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-3">What does this mean for NAGOD?</h2>
+      <p class="mb-3">
+        Right now, NAGOD is still in a safe groundwater category. However, the data shows that
+        groundwater usage is high and can increase if not controlled.
+      </p>
+      <p>
+        If extraction continues to rise and recharge decreases in future years, the area may move
+        towards a semi-critical or critical stage.
+      </p>
+    </section>
+
+    <!-- Suggestions -->
+    <section class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-xl font-semibold mb-3">Simple Suggestions</h2>
+      <ul class="list-disc list-inside space-y-2">
+        <li>Encourage rainwater harvesting in villages and towns.</li>
+        <li>Monitor borewell usage in non-command areas.</li>
+        <li>Promote water-saving farming techniques.</li>
+        <li>Review groundwater data every year, not just category labels.</li>
+      </ul>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center text-gray-500 text-sm">
+      Groundwater Report for NAGOD • Simplified Explanation
+    </footer>
+
+  </div>
+
+  <script>
+    const labels = ["Year 1", "Year 2", "Year 3"];
+
+    new Chart(document.getElementById("rechargeChart"), {
+      type: "line",
+      data: {
+        labels,
+        datasets: [{
+          label: "Recharge",
+          data: [12251, 12452.97, 11572.05],
+          borderColor: "#16a34a",
+          backgroundColor: "rgba(22,163,74,0.2)",
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    new Chart(document.getElementById("draftChart"), {
+      type: "line",
+      data: {
+        labels,
+        datasets: [{
+          label: "Draft",
+          data: [7843.13, 8125.47, 7551.21],
+          borderColor: "#dc2626",
+          backgroundColor: "rgba(220,38,38,0.2)",
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    new Chart(document.getElementById("rechargeBar"), {
+      type: "bar",
+      data: {
+        labels: ["Non-Command", "Command"],
+        datasets: [{
+          data: [10116.28, 1455.77],
+          backgroundColor: ["#3b82f6", "#9333ea"]
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    new Chart(document.getElementById("draftPie"), {
+      type: "pie",
+      data: {
+        labels: ["Non-Command", "Command"],
+        datasets: [{
+          data: [7485.73, 65.48],
+          backgroundColor: ["#f97316", "#22c55e"]
+        }]
+      },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+  </script>
+
+</body>
+</html>

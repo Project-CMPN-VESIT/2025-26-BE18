@@ -1,0 +1,17 @@
+agno
+flask
+python-dotenv
+google-genai 
+duckduckgo-search 
+gunicorn
+flask_cors
+rapidfuzz
+google.generativeai
+psycopg2-binary
+cryptography
+cloudinary
+geopandas
+shapely
+rasterio
+pyproj
+numpy

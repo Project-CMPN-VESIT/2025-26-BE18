@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groundwater Sustainability Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom styles for dark theme */
+        body {
+            @apply bg-gray-900 text-gray-200;
+        }
+        .chart-container {
+            @apply bg-gray-800 p-4 rounded-lg shadow-md;
+        }
+        .chart-title {
+            @apply text-xl font-semibold text-gray-100 mb-4;
+        }
+        .summary-card {
+            @apply bg-gray-800 p-6 rounded-lg shadow-md;
+        }
+        .summary-heading {
+            @apply text-2xl font-bold text-blue-400 mb-4;
+        }
+        .action-item {
+            @apply text-lg text-gray-300;
+        }
+        .data-point {
+            @apply text-blue-300 font-medium;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 antialiased">
+
+    <div class="max-w-7xl mx-auto p-6 lg:p-8">
+        <h1 class="text-4xl font-extrabold text-center text-blue-500 mb-10">
+            Impact of Land Use Change on Groundwater Sustainability (Lucknow Area)
+        </h1>
+
+        <!-- Executive Summary -->
+        <div class="summary-card mb-10">
+            <h2 class="summary-heading">Executive Summary</h2>
+            <p class="text-lg mb-4 leading-relaxed">
+                This analysis, based on multi-temporal satellite and field survey data for the Lucknow area from 2008 to 2016, reveals significant impacts of Land Use/Land Cover (LULC) changes on groundwater resources and hydro-geomorphic features.
+                Rapid urbanization and extensive agricultural practices have led to a substantial alteration of the landscape.
+                The study observed a <span class="data-point">4.09% increase in built-up land</span> and a <span class="data-point">5.49% increase in open land</span>, primarily at the expense of natural vegetation, which saw an <span class="data-point">8.80% decrease</span>, and agricultural land, which decreased by <span class="data-point">2.31%</span>.
+                Surface water bodies also experienced a <span class="data-point">0.35% reduction</span>.
+                Crucially, vital hydro-geomorphic features like paleochannels and oxbow lakes have significantly declined, impacting natural recharge.
+                Groundwater levels show an alarming decreasing trend, with areas experiencing depths of <span class="data-point">greater than 20 meters below ground level increasing by 48.3% (from 116 km² to 172 km²)</span> during the study period.
+                A strong positive correlation (<span class="data-point">R²=0.81</span>) was found between LULC changes and groundwater level dynamics, underscoring the urgent need for sustainable management.
+            </p>
+        </div>
+
+        <!-- Key Action Items -->
+        <div class="summary-card mb-10">
+            <h2 class="summary-heading">Key Action Items</h2>
+            <ul class="list-disc list-inside space-y-2">
+                <li class="action-item">Implement sustainable water resource management strategies to address declining groundwater levels.</li>
+                <li class="action-item">Prioritize the protection, rejuvenation, and restoration of natural water bodies and hydro-geomorphic features like paleochannels and oxbow lakes.</li>
+                <li class="action-item">Develop and enforce proper urban planning policies that minimize impervious surfaces and promote natural infiltration.</li>
+                <li class="action-item">Focus on the rejuvenation of major tributaries of the Gomati River basin to enhance surface and groundwater resources.</li>
+                <li class="action-item">Continue and expand monitoring of LULC changes and groundwater dynamics using geospatial technology to inform decision-making.</li>
+            </ul>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+
+            <!-- Chart 1: LULC Area Comparison -->
+            <div class="chart-container">
+                <h2 class="chart-title">Land Use/Land Cover Area (km²) Comparison (2008 vs 2016)</h2>
+                <div class="relative h-80 w-full">
+                    <canvas id="lulcAreaChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 2: LULC Percentage Change -->
+            <div class="chart-container">
+                <h2 class="chart-title">Significant LULC Percentage Change (2008-2016)</h2>
+                <div class="relative h-80 w-full">
+                    <canvas id="lulcChangePieChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 3: Hydro-geomorphic Features Change -->
+            <div class="chart-container">
+                <h2 class="chart-title">Hydro-geomorphic Features Area (km²) Comparison (2008 vs 2016)</h2>
+                <div class="relative h-80 w-full">
+                    <canvas id="hydroGeoChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 4: Groundwater Depth Trend (Line Chart) -->
+            <div class="chart-container">
+                <h2 class="chart-title">Trend in Groundwater Depth (Area with Depth > 20 mbgl)</h2>
+                <div class="relative h-80 w-full">
+                    <canvas id="groundwaterDepthLineChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Data from the document
+        const lulcLabels = ["Forest/orchard", "Vegetation", "Agricultural land", "Open land", "Built-up area", "Water bodies"];
+        const lulc2008Area = [290.09, 434.33, 1407.8, 195.45, 176.38, 24.53];
+        const lulc2016Area = [337.42, 211.71, 1349.49, 334.37, 279.89, 15.77];
+        const lulcChangePercentage = [1.87, -8.80, -2.31, 5.49, 4.09, -0.35];
+
+        const hydroGeoLabels = ["Cut-off meander", "Meander scars", "Oxbow lakes", "Paleochannels", "Water bodies"];
+        const hydroGeo2008Area = [0.95, 3.70, 6.78, 24.13, 17.46];
+        const hydroGeo2016Area = [0.86, 3.83, 5.23, 15.34, 8.98];
+
+        const gwDepthLabels = ["<5", "5-10", "10-15", "15-20", "20-25", "25-30", "30-35", ">35"];
+        const gwDepth2008Area = [58, 504, 1569, 281, 62, 38, 15, 1];
+        const gwDepth2016Area = [29, 645, 1362, 320, 109, 43, 18, 2];
+
+        // Derived data for Groundwater Depth Line Chart (Area with depth > 20 mbgl)
+        const areaGt20mbgl2008 = gwDepth2008Area.slice(4).reduce((sum, val) => sum + val, 0); // 20-25, 25-30, 30-35, >35
+        const areaGt20mbgl2016 = gwDepth2016Area.slice(4).reduce((sum, val) => sum + val, 0); // 20-25, 25-30, 30-35, >35
+
+
+        // Chart 1: LULC Area Comparison (Bar Chart)
+        const lulcAreaCtx = document.getElementById('lulcAreaChart').getContext('2d');
+        new Chart(lulcAreaCtx, {
+            type: 'bar',
+            data: {
+                labels: lulcLabels,
+                datasets: [
+                    {
+                        label: 'Area (km²) in 2008',
+                        data: lulc2008Area,
+                        backgroundColor: 'rgba(59, 130, 246, 0.7)', // blue-500
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Area (km²) in 2016',
+                        data: lulc2016Area,
+                        backgroundColor: 'rgba(16, 185, 129, 0.7)', // emerald-500
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart 2: LULC Percentage Change (Pie Chart)
+        const pieLabels = lulcLabels.filter((_, i) => Math.abs(lulcChangePercentage[i]) > 0.5); // Filter for significant changes
+        const pieData = lulcChangePercentage.filter((_, i) => Math.abs(lulcChangePercentage[i]) > 0.5);
+        const pieColors = pieData.map(val => val > 0 ? 'rgba(59, 130, 246, 0.7)' : 'rgba(239, 68, 68, 0.7)'); // Blue for increase, Red for decrease
+
+        const lulcChangePieCtx = document.getElementById('lulcChangePieChart').getContext('2d');
+        new Chart(lulcChangePieCtx, {
+            type: 'pie',
+            data: {
+                labels: pieLabels,
+                datasets: [{
+                    label: 'Percentage Change (%)',
+                    data: pieData,
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.7)', // Forest/orchard (Increase)
+                        'rgba(239, 68, 68, 0.7)', // Vegetation (Decrease)
+                        'rgba(239, 68, 68, 0.7)', // Agricultural land (Decrease)
+                        'rgba(16, 185, 129, 0.7)', // Open land (Increase)
+                        'rgba(59, 130, 246, 0.7)', // Built-up area (Increase)
+                        'rgba(239, 68, 68, 0.7)' // Water bodies (Decrease)
+                    ],
+                    borderColor: 'rgba(255, 255, 255, 0.8)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: 'white'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed !== null) {
+                                    label += context.parsed.toFixed(2) + '%';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart 3: Hydro-geomorphic Features Change (Bar Chart)
+        const hydroGeoCtx = document.getElementById('hydroGeoChart').getContext('2d');
+        new Chart(hydroGeoCtx, {
+            type: 'bar',
+            data: {
+                labels: hydroGeoLabels,
+                datasets: [
+                    {
+                        label: 'Area (km²) in 2008',
+                        data: hydroGeo2008Area,
+                        backgroundColor: 'rgba(234, 179, 8, 0.7)', // amber-500
+                        borderColor: 'rgba(234, 179, 8, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Area (km²) in 2016',
+                        data: hydroGeo2016Area,
+                        backgroundColor: 'rgba(249, 115, 22, 0.7)', // orange-500
+                        borderColor: 'rgba(249, 115, 22, 1)',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Chart 4: Groundwater Depth Trend (Line Chart)
+        const groundwaterDepthLineCtx = document.getElementById('groundwaterDepthLineChart').getContext('2d');
+        new Chart(groundwaterDepthLineCtx, {
+            type: 'line',
+            data: {
+                labels: ['2008', '2016'],
+                datasets: [{
+                    label: 'Area (km²) with Depth > 20 mbgl',
+                    data: [areaGt20mbgl2008, areaGt20mbgl2016],
+                    backgroundColor: 'rgba(220, 38, 38, 0.7)', // red-600
+                    borderColor: 'rgba(220, 38, 38, 1)',
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: 'white'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Area (km²)',
+                            color: 'white'
+                        },
+                        ticks: {
+                            color: 'white'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

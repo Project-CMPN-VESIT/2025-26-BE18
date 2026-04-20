@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalyan Groundwater Analysis Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom styles for dark mode transition */
+        body {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        /* Tailwind's dark mode utility automatically handles most color changes
+           when 'dark' class is applied to HTML. Add specific overrides if needed. */
+        .dark .bg-gray-100 { background-color: #1a202c; }
+        .dark .text-gray-900 { color: #e2e8f0; }
+        .dark .bg-white { background-color: #2d3748; }
+        .dark .text-gray-700 { color: #cbd5e0; }
+        .dark .border-gray-200 { border-color: #4a5568; }
+        .dark .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.12); }
+        .dark .hover\:bg-gray-100:hover { background-color: #4a5568; } /* Corrected hover for dark mode table rows */
+        .dark .text-blue-700 { color: #63b3ed; } /* Lighter blue for dark mode header */
+        .dark .text-blue-600 { color: #63b3ed; } /* Lighter blue for dark mode section titles */
+        .dark .text-green-600 { color: #68d391; }
+        .dark .text-red-600 { color: #fc8181; }
+        .dark .text-purple-600 { color: #a78bfa; }
+        .dark .bg-green-200 { background-color: #2d3748; } /* Darker green background for safe tag */
+        .dark .text-green-800 { color: #68d391; } /* Lighter green text for safe tag */
+        .dark .bg-red-200 { background-color: #2d3748; } /* Darker red background for other categories */
+        .dark .text-red-800 { color: #fc8181; } /* Lighter red text for other categories */
+
+        /* Chart.js tooltips styling for dark mode */
+        .chartjs-tooltip {
+            background-color: rgba(45, 55, 72, 0.9) !important; /* dark-bg-tooltip */
+            color: #e2e8f0 !important; /* dark-text */
+            border: 1px solid #4a5568 !important; /* dark-border */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900 min-h-screen flex flex-col font-sans">
+    <!-- Dark Mode Toggle -->
+    <button id="darkModeToggle" class="fixed top-4 right-4 z-50 p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-md transition-colors duration-300 hover:bg-gray-300 dark:hover:bg-gray-600">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M3 12H2m15.394 5.606l-.707.707M6.343 6.343l-.707-.707m12.728 0l-.707-.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+        </svg>
+    </button>
+
+    <div class="container mx-auto p-4 md:p-8 flex-grow">
+        <header class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 dark:text-blue-400 mb-2">Kalyan Groundwater Status Dashboard</h1>
+            <p class="text-xl text-gray-700 dark:text-gray-300">Understanding Groundwater Levels, Trends, and Future Predictions for Laymen</p>
+        </header>
+
+        <!-- Executive Summary -->
+        <section class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-blue-600 dark:text-blue-300 mb-4">Executive Summary: Kalyan Groundwater</h2>
+            <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                The groundwater situation in Kalyan has consistently remained in a <strong>"safe" category</strong> over the past several years (2016-17 to 2024-25).
+                This is great news! It means that the amount of water people take out from underground (what we call 'draft') is much less than the amount of water that naturally refills the ground (called 'recharge').
+                While there was a lot of rain in 2016-17, rainfall levels have been more consistent and lower since 2019-20. Even with this, the natural refilling of groundwater has stayed quite high, though it has shown a slight, gradual decrease recently.
+                The amount of water taken out (draft) was higher in 2016-17 but significantly reduced in later years and has stayed relatively stable since then, which is key to keeping Kalyan's groundwater in the "safe" zone.
+            </p>
+        </section>
+
+        <!-- Key Insights -->
+        <section class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-blue-600 dark:text-blue-300 mb-4">Key Insights</h2>
+            <ul class="list-disc pl-6 text-gray-700 dark:text-gray-300 space-y-2">
+                <li><strong>Consistently Safe:</strong> Kalyan's groundwater is in a good, sustainable state, meaning we're not using more than what nature provides.</li>
+                <li><strong>Slight Decrease in Refill:</strong> The natural refilling of groundwater (recharge) has slowly gone down from about 866 Million Cubic Meters (MCM) in 2019-20 to around 852 MCM in 2024-25. This is a trend to watch.</li>
+                <li><strong>Sensible Water Use:</strong> After using a higher amount of water in 2016-17 (about 394 MCM), the community has significantly cut down and maintained stable usage, around 163-165 MCM in recent years. This smart usage is vital for sustainability.</li>
+                <li><strong>Low Usage Percentage:</strong> Only about 19-20% of the naturally refilled groundwater is being used. This low percentage is excellent for ensuring water availability for future generations.</li>
+            </ul>
+        </section>
+
+        <!-- Current Status and Trends -->
+        <section class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-blue-600 dark:text-blue-300 mb-4">Groundwater Trends Over Years (Kalyan)</h2>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">Here's a detailed look at how groundwater levels, natural refilling (recharge), and water usage (draft) have changed in Kalyan over the years. All water amounts are in Million Cubic Meters (MCM), and rainfall in millimeters (mm).</p>
+
+            <div class="overflow-x-auto mb-6">
+                <table class="min-w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+                    <thead>
+                        <tr class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 uppercase text-sm leading-normal">
+                            <th class="py-3 px-6 text-left">Year</th>
+                            <th class="py-3 px-6 text-right">Rainfall (mm)</th>
+                            <th class="py-3 px-6 text-right">Recharge (MCM)</th>
+                            <th class="py-3 px-6 text-right">Draft (MCM)</th>
+                            <th class="py-3 px-6 text-right">Net Available (MCM)</th>
+                            <th class="py-3 px-6 text-right">Usage Rate (%)</th>
+                            <th class="py-3 px-6 text-left">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="groundwaterTableBody" class="text-gray-700 dark:text-gray-300 text-sm font-light">
+                        <!-- Data will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-sm text-gray-600 dark:text-gray-400 italic mt-4">
+                Note: Some years might be missing from the data, but the trend analysis covers the available information.
+                "Usage Rate" refers to the 'Stage of Extraction', showing how much water is used compared to what is naturally refilled.
+            </p>
+
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mt-8 mb-4">Visual Trends</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-inner">
+                    <h4 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">Rainfall Trends</h4>
+                    <canvas id="rainfallChart"></canvas>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-inner">
+                    <h4 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">Groundwater Recharge Trends (Natural Refill)</h4>
+                    <canvas id="rechargeChart"></canvas>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-inner">
+                    <h4 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">Groundwater Draft Trends (Water Used)</h4>
+                    <canvas id="draftChart"></canvas>
+                </div>
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg shadow-inner">
+                    <h4 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-2">Net Available Water & Usage Rate</h4>
+                    <canvas id="availabilityExtractionChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Next Year Prediction -->
+        <section class="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-semibold text-blue-600 dark:text-blue-300 mb-4">Next Year's Groundwater Prediction (2025-26)</h2>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">Based on how things have changed over the past few years, here's an approximate prediction for Kalyan's groundwater situation for the upcoming year (2025-26):</p>
+            <div id="predictionDetails" class="space-y-3 text-lg text-gray-800 dark:text-gray-200">
+                <p><strong>Predicted Natural Refill (Recharge):</strong> <span class="text-green-600 dark:text-green-400 font-bold">~<span id="predictedRecharge">...</span> MCM</span> (Likely a slight, continued decrease)</p>
+                <p><strong>Predicted Water Used (Draft):</strong> <span class="text-red-600 dark:text-red-400 font-bold">~<span id="predictedDraft">...</span> MCM</span> (Expected to remain stable, similar to recent usage)</p>
+                <p><strong>Predicted Net Available Groundwater:</strong> <span class="text-blue-600 dark:text-blue-400 font-bold">~<span id="predictedNetAvailable">...</span> MCM</span></p>
+                <p><strong>Predicted Usage Rate:</strong> <span class="text-purple-600 dark:text-purple-400 font-bold">~<span id="predictedSOGE">...</span>%</span></p>
+                <p><strong>Overall Status:</strong> Kalyan is expected to continue its <span class="font-bold text-green-700 dark:text-green-500">"SAFE"</span> groundwater status, showing responsible and sustainable water management.</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400 italic">
+                    <span class="font-bold">Important Note:</span> These predictions are educated guesses based on past patterns. Real-world conditions can change due to new rainfall amounts, changes in local development, or how people use water.
+                </p>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="bg-gray-200 dark:bg-gray-900 text-gray-700 dark:text-gray-400 text-center p-4 mt-8">
+        <p>&copy; 2024 Groundwater Analysis Dashboard. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const rawData = [
+            {"year": "2016-17", "data": {"locationName": "KALYAN", "color": null, "locUUID": "c8e8f67b-aecc-44cb-9f88-24b4130ee4bc", "rainfall": 6313.222273794217, "recharge": {"total": {"total": 851.5624531347067, "non_command": 851.5624531347067}}, "loss": null, "draft": {"total": {"total": 393.8338869508758, "non_command": 112.60401362432201}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 12643.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 12643.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "c8e8f67b-aecc-44cb-9f88-24b4130ee4bc", "draftData": {"total": {"total": 393.8338869508758, "non_command": 112.60401362432201}}, "rechargeData": {"total": {"total": 851.5624531347067, "non_command": 851.5624531347067}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}},
+            {"year": "2019-20", "data": {"locationName": "KALYAN", "color": null, "locUUID": "c8e8f67b-aecc-44cb-9f88-24b4130ee4bc", "rainfall": 2491.6267816182867, "recharge": {"total": {"total": 866.2515347524833, "non_command": 866.2515347524833}}, "loss": null, "draft": {"total": {"total": 163.03157911991744, "non_command": 163.03157911991744}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 12643.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 12643.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "c8e8f67b-aecc-44cb-9f88-24b4130ee4bc", "draftData": {"total": {"total": 163.03157911991744, "non_command": 163.03157911991744}}, "rechargeData": {"total": {"total": 866.2515347524833, "non_command": 866.2515347524833}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}},
+            {"year": "2021-22", "data": {"locationName": "KALYAN", "color": null, "locUUID": "12beae99-0184-44ba-8bfd-d783207cd130", "rainfall": 2491.6267816182867, "recharge": {"total": {"total": 860.4757444030656, "non_command": 860.4757444030656}}, "loss": null, "draft": {"total": {"total": 163.03157911991744, "non_command": 163.03157911991744}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 12643.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 12643.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "12beae99-0184-44ba-8bfd-d783207cd130", "draftData": {"total": {"total": 163.03157911991744, "non_command": 163.03157911991744}}, "rechargeData": {"total": {"total": 860.4757444030656, "non_command": 860.4757444030656}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}},
+            {"year": "2022-23", "data": {"locationName": "KALYAN", "color": null, "locUUID": "12beae99-0184-44ba-8bfd-d783207cd130", "rainfall": 2491.6267816182867, "recharge": {"total": {"total": 857.8280482884815, "non_command": 857.8280482884815}}, "loss": null, "draft": {"total": {"total": 163.6486116883268, "non_command": 163.6486116883268}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 12643.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 12643.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "12beae99-0184-44ba-8bfd-d783207cd130", "draftData": {"total": {"total": 163.6486116883268, "non_command": 163.6486116883268}}, "rechargeData": {"total": {"total": 857.8280482884815, "non_command": 857.8280482884815}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}},
+            {"year": "2023-24", "data": {"locationName": "Kalyan", "color": null, "locUUID": "763299b7-8e54-4d27-8df4-fd65f51f5dcd", "rainfall": 2491.6267816182867, "recharge": {"total": {"total": 854.742569953539, "non_command": 854.742569953539}}, "loss": null, "draft": {"total": {"total": 164.81080781808615, "non_command": 164.81080781808615}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 12643.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 12643.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "763299b7-8e54-4d27-8df4-fd65f51f5dcd", "draftData": {"total": {"total": 164.81080781808615, "non_command": 164.81080781808615}}, "rechargeData": {"total": {"total": 854.742569953539, "non_command": 854.742569953539}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}},
+            {"year": "2024-25", "data": {"locationName": "Kalyan", "color": null, "locUUID": "7a4b1a32-fd99-44c1-91c1-09ad23279c46", "rainfall": 2491.6267816182867, "recharge": {"total": {"total": 851.8980979853065, "non_command": 851.8980979853065}}, "loss": null, "draft": {"total": {"total": 162.67520578787762, "non_command": 162.67520578787762}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 12643.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 12643.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "7a4b1a32-fd99-44c1-91c1-09ad23279c46", "draftData": {"total": {"total": 162.67520578787762, "non_command": 162.67520578787762}}, "rechargeData": {"total": {"total": 851.8980979853065, "non_command": 851.8980979853065}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}
+        ];
+
+        // Process data for display and charting
+        const processedData = rawData.map(item => {
+            const recharge = item.data.recharge.total.total;
+            const draft = item.data.draft.total.total;
+            const netAvailability = recharge - draft;
+            const stageOfExtraction = (recharge > 0) ? (draft / recharge) * 100 : 0; // Avoid division by zero
+
+            return {
+                year: item.year,
+                rainfall: item.data.rainfall,
+                recharge: recharge,
+                draft: draft,
+                netAvailability: netAvailability,
+                stageOfExtraction: stageOfExtraction,
+                category: item.data.category.total
+            };
+        });
+
+        // Sort data by year for proper trend display
+        processedData.sort((a, b) => {
+            const yearA = parseInt(a.year.split('-')[0]);
+            const yearB = parseInt(b.year.split('-')[0]);
+            return yearA - yearB;
+        });
+
+        // Populate the table
+        const tableBody = document.getElementById('groundwaterTableBody');
+        processedData.forEach(item => {
+            const row = document.createElement('tr');
+            row.className = 'border-b border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700';
+            row.innerHTML = `
+                <td class="py-3 px-6 text-left whitespace-nowrap">${item.year}</td>
+                <td class="py-3 px-6 text-right">${item.rainfall.toFixed(2)}</td>
+                <td class="py-3 px-6 text-right">${item.recharge.toFixed(2)}</td>
+                <td class="py-3 px-6 text-right">${item.draft.toFixed(2)}</td>
+                <td class="py-3 px-6 text-right">${item.netAvailability.toFixed(2)}</td>
+                <td class="py-3 px-6 text-right">${item.stageOfExtraction.toFixed(2)}</td>
+                <td class="py-3 px-6 text-left"><span class="px-3 py-1 text-xs font-semibold rounded-full ${item.category === 'safe' ? 'bg-green-200 text-green-800 dark:bg-green-700 dark:text-green-200' : 'bg-red-200 text-red-800 dark:bg-red-700 dark:text-red-200'}">${item.category.toUpperCase()}</span></td>
+            `;
+            tableBody.appendChild(row);
+        });
+
+        // Chart data extraction
+        const years = processedData.map(item => item.year);
+        const rainfallData = processedData.map(item => item.rainfall);
+        const rechargeData = processedData.map(item => item.recharge);
+        const draftData = processedData.map(item => item.draft);
+        const netAvailabilityData = processedData.map(item => item.netAvailability);
+        const stageOfExtractionData = processedData.map(item => item.stageOfExtraction);
+
+        // Chart.js Configuration
+        const getChartOptions = (title) => {
+            const chartTextColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-text-color');
+            const chartGridColor = getComputedStyle(document.documentElement).getPropertyValue('--chart-grid-color');
+            return {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: title,
+                        color: chartTextColor
+                    },
+                    legend: {
+                        labels: {
+                            color: chartTextColor
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y.toFixed(2);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: chartGridColor
+                        },
+                        ticks: {
+                            color: chartTextColor
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: chartGridColor
+                        },
+                        ticks: {
+                            color: chartTextColor
+                        },
+                        title: {
+                            display: true,
+                            text: 'MCM / mm',
+                            color: chartTextColor
+                        }
+                    }
+                }
+            };
+        };
+
+        let rainfallChartInstance, rechargeChartInstance, draftChartInstance, availabilityExtractionChartInstance;
+
+        const createCharts = () => {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            const textColor = isDarkMode ? '#E2E8F0' : '#4A5568';
+            const gridColor = isDarkMode ? 'rgba(74, 85, 104, 0.5)' : 'rgba(203, 213, 224, 0.2)';
+
+            // Rainfall Chart
+            const rainfallCtx = document.getElementById('rainfallChart').getContext('2d');
+            rainfallChartInstance = new Chart(rainfallCtx, {
+                type: 'bar',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Rainfall (mm)',
+                        data: rainfallData,
+                        backgroundColor: '#63b3ed', // Tailwind blue-400
+                        borderColor: '#4299e1', // Tailwind blue-500
+                        borderWidth: 1
+                    }]
+                },
+                options: getChartOptions('Rainfall (mm) Over Years')
+            });
+
+            // Recharge Chart
+            const rechargeCtx = document.getElementById('rechargeChart').getContext('2d');
+            rechargeChartInstance = new Chart(rechargeCtx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Recharge (MCM)',
+                        data: rechargeData,
+                        backgroundColor: 'rgba(104, 211, 145, 0.5)', // Tailwind green-400 with opacity
+                        borderColor: '#48bb78', // Tailwind green-500
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: getChartOptions('Groundwater Recharge (MCM) Over Years')
+            });
+
+            // Draft Chart
+            const draftCtx = document.getElementById('draftChart').getContext('2d');
+            draftChartInstance = new Chart(draftCtx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Draft (MCM)',
+                        data: draftData,
+                        backgroundColor: 'rgba(252, 129, 129, 0.5)', // Tailwind red-400 with opacity
+                        borderColor: '#f56565', // Tailwind red-500
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: getChartOptions('Groundwater Draft (MCM) Over Years')
+            });
+
+            // Net Availability & Stage of Extraction Chart
+            const availabilityExtractionCtx = document.getElementById('availabilityExtractionChart').getContext('2d');
+            availabilityExtractionChartInstance = new Chart(availabilityExtractionCtx, {
+                type: 'bar',
+                data: {
+                    labels: years,
+                    datasets: [
+                        {
+                            label: 'Net Available (MCM)',
+                            data: netAvailabilityData,
+                            backgroundColor: '#a78bfa', // Tailwind purple-400
+                            borderColor: '#8b5cf6', // Tailwind purple-500
+                            borderWidth: 1,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Usage Rate (%)', // Renamed from Stage of Extraction
+                            data: stageOfExtractionData,
+                            backgroundColor: 'rgba(251, 191, 36, 0.7)', // Tailwind yellow-400 with opacity
+                            borderColor: '#fcd34d', // Tailwind yellow-500
+                            type: 'line',
+                            yAxisID: 'y1',
+                            tension: 0.3,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    ...getChartOptions('Net Available Groundwater & Usage Rate'),
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            grid: {
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor
+                            },
+                            title: {
+                                display: true,
+                                text: 'MCM',
+                                color: textColor
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            grid: {
+                                drawOnChartArea: false, // Only draw grid lines for the first y-axis
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor
+                            },
+                            title: {
+                                display: true,
+                                text: 'Percentage (%)',
+                                color: textColor
+                            },
+                            min: 0,
+                            max: 100
+                        },
+                        x: {
+                            grid: {
+                                color: gridColor
+                            },
+                            ticks: {
+                                color: textColor
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        // Function to update chart colors based on dark mode
+        const updateChartColors = () => {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            // Define CSS variables for chart elements to be picked up by getChartOptions
+            document.documentElement.style.setProperty('--chart-text-color', isDarkMode ? '#E2E8F0' : '#4A5568');
+            document.documentElement.style.setProperty('--chart-grid-color', isDarkMode ? 'rgba(74, 85, 104, 0.5)' : 'rgba(203, 213, 224, 0.2)');
+
+            // Destroy existing charts if they exist
+            if (window.rainfallChartInstance) window.rainfallChartInstance.destroy();
+            if (window.rechargeChartInstance) window.rechargeChartInstance.destroy();
+            if (window.draftChartInstance) window.draftChartInstance.destroy();
+            if (window.availabilityExtractionChartInstance) window.availabilityExtractionChartInstance.destroy();
+
+            // Recreate charts with updated color options
+            createCharts();
+        };
+
+        // Dark Mode Toggle Logic
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            updateChartColors(); // Update chart colors on toggle
+        });
+
+        // Set initial theme based on local storage or system preference
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        // Initialize charts on DOM load (after initial theme is set)
+        document.addEventListener('DOMContentLoaded', updateChartColors);
+
+
+        // --- Prediction Logic for 2025-26 ---
+        const lastFewYears = processedData.slice(-4); // Get the last 4 data points for trend calculation
+
+        // Recharge Prediction: Average decrease from the last 3 changes
+        let rechargeChanges = [];
+        for (let i = 1; i < lastFewYears.length; i++) {
+            rechargeChanges.push(lastFewYears[i].recharge - lastFewYears[i-1].recharge);
+        }
+        const avgRechargeChange = rechargeChanges.length > 0 ? rechargeChanges.reduce((a, b) => a + b, 0) / rechargeChanges.length : 0;
+        const predictedRecharge = lastFewYears[lastFewYears.length - 1].recharge + avgRechargeChange;
+
+        // Draft Prediction: Average of the last 3 values for stability
+        const last3DraftValues = processedData.slice(-3).map(item => item.draft);
+        const predictedDraft = last3DraftValues.reduce((a, b) => a + b, 0) / last3DraftValues.length;
+
+        const predictedNetAvailable = predictedRecharge - predictedDraft;
+        const predictedSOGE = (predictedRecharge > 0) ? (predictedDraft / predictedRecharge) * 100 : 0;
+
+        document.getElementById('predictedRecharge').textContent = predictedRecharge.toFixed(2);
+        document.getElementById('predictedDraft').textContent = predictedDraft.toFixed(2);
+        document.getElementById('predictedNetAvailable').textContent = predictedNetAvailable.toFixed(2);
+        document.getElementById('predictedSOGE').textContent = predictedSOGE.toFixed(2);
+
+    </script>
+</body>
+</html>

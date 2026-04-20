@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groundwater Sustainability Report - Lucknow</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .container {
+            max-width: 1200px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 antialiased">
+    <div class="container mx-auto px-4 py-8">
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-blue-800 mb-2">Impact of Land Use Change on Groundwater Sustainability</h1>
+            <p class="text-xl text-gray-600">Analysis of Lucknow Area (2008-2016) using Earth Observation Data</p>
+            <p class="text-md text-gray-500 mt-2">Pradipika Verma, Prafull Singh, S. K. Srivastava</p>
+        </header>
+
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
+            <!-- Overview Card -->
+            <div class="card lg:col-span-1 bg-blue-50">
+                <h2 class="text-2xl font-semibold text-blue-700 mb-4">Study Overview</h2>
+                <p class="text-gray-700 leading-relaxed">
+                    This study investigates the long-term effects of Land Use/Land Cover (LULC) changes on surface and groundwater resources in the Quaternary aquifers of the Lucknow area, Ganga plain, from 2008 to 2016. Using multi-temporal satellite data (Landsat-7 & 8) and field surveys, the research maps LULC and hydro-geomorphic features, analyzes groundwater level trends, and explores their interrelationships.
+                </p>
+                <ul class="list-disc list-inside text-gray-600 mt-4 space-y-1">
+                    <li><strong>Location:</strong> Lucknow, Uttar Pradesh, India</li>
+                    <li><strong>Period:</strong> 2008 - 2016</li>
+                    <li><strong>Key Data:</strong> Landsat Satellite Data, Groundwater Levels, Meteorological Data</li>
+                    <li><strong>Methods:</strong> Hybrid Image Classification, IDW Interpolation, GIS Analysis</li>
+                </ul>
+            </div>
+
+            <!-- Key Findings Card -->
+            <div class="card lg:col-span-2 bg-green-50">
+                <h2 class="text-2xl font-semibold text-green-700 mb-4">Overall Key Findings (2008-2016)</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <h3 class="text-xl font-medium text-gray-800 mb-2">LULC Changes:</h3>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li><strong>Built-up land:</strong> Increased by <span class="font-bold text-red-600">4.09%</span> (176.38 to 279.89 km²)</li>
+                            <li><strong>Open land/construction:</strong> Increased by <span class="font-bold text-red-600">5.49%</span> (195.45 to 334.37 km²)</li>
+                            <li><strong>Vegetation cover:</strong> Decreased by <span class="font-bold text-green-600">8.80%</span> (434.33 to 211.71 km²)</li>
+                            <li><strong>Agricultural land:</strong> Decreased by <span class="font-bold text-green-600">2.31%</span> (1407.8 to 1349.49 km²)</li>
+                            <li><strong>Surface water bodies:</strong> Decreased by <span class="font-bold text-green-600">0.35%</span> (24.53 to 15.77 km²)</li>
+                            <li><strong>Forest/orchard:</strong> Increased by <span class="font-bold text-red-600">1.87%</span> (290.09 to 337.42 km²)</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-medium text-gray-800 mb-2">Hydro-Geomorphic & Groundwater:</h3>
+                        <ul class="list-disc list-inside text-gray-700 space-y-1">
+                            <li><strong>Total hydro-geomorphic features:</strong> Decreased from 53.02 km² to 34.24 km²</li>
+                            <li><strong>Paleochannels:</strong> Decreased from 24.13 km² to 15.34 km²</li>
+                            <li><strong>Oxbow lakes:</strong> Decreased from 6.78 km² to 5.23 km²</li>
+                            <li><strong>Water bodies (specific):</strong> Decreased from 17.46 km² to 8.98 km²</li>
+                            <li><strong>Groundwater Depletion:</strong> Significant decrease in groundwater levels observed.</li>
+                            <li><strong>Area with DTWL 5-10 mbgl:</strong> Increased from 504 km² to 645 km²</li>
+                            <li><strong>Area with DTWL >35 mbgl:</strong> Increased from 1 km² to 2 km² (indicating deeper water tables)</li>
+                            <li>A significant positive correlation (R²=0.81) found between LULC changes and groundwater level dynamics.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Charts Section -->
+        <section class="mb-10">
+            <h2 class="text-3xl font-bold text-blue-800 text-center mb-6">Visualized Trends (2008 vs 2016)</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">Land Use/Land Cover Changes (Area in km²)</h3>
+                    <canvas id="lulcChart"></canvas>
+                </div>
+                <div class="card">
+                    <h3 class="text-xl font-semibold mb-4 text-gray-800">Hydro-Geomorphic Feature Changes (Area in km²)</h3>
+                    <canvas id="hydroGeomorphicChart"></canvas>
+                </div>
+            </div>
+            <div class="card mt-6">
+                <h3 class="text-xl font-semibold mb-4 text-gray-800">Pre-Monsoon Groundwater Depth to Water Level (DTWL) Area Trend (2008-2016)</h3>
+                <canvas id="dtwlTrendChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Key Action Items Section -->
+        <section class="card bg-yellow-50 mb-10">
+            <h2 class="text-2xl font-semibold text-yellow-700 mb-4">Key Action Items & Recommendations</h2>
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+                <li><strong>Urgent Resource Inventory:</strong> Need for further inventory, rejuvenation, and restoration of all important land and water bodies to ensure future water and food security.</li>
+                <li><strong>Sustainable Urban Planning:</strong> Critical to determine land use activities that pose a danger to surface water bodies and hydro-morphological features.</li>
+                <li><strong>Groundwater Management:</strong> Rejuvenation of major tributaries of the Gomati River basin is essential for improved groundwater resource management.</li>
+                <li><strong>Data-Driven Decision Making:</strong> The study confirms the value of geospatial technology for mapping and generating a database to support water resource management and urban planning.</li>
+                <li><strong>Addressing Anthropogenic Pressure:</strong> Recognize and mitigate the impact of population growth, urbanization, and agricultural expansion on water resources.</li>
+                <li><strong>Impervious Surface Reduction:</strong> Strategies to increase natural infiltration and surface recharge by reducing impervious surfaces created by built-up land expansion.</li>
+            </ul>
+        </section>
+
+        <footer class="text-center text-gray-500 text-sm mt-10">
+            <p>&copy; 2024 Analysis Report based on Springer Nature Publication. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Data for LULC Chart (Table 2)
+        const lulcLabels = ['Forest/orchard', 'Vegetation', 'Agricultural land', 'Open land/construction land', 'Built-up area', 'Water bodies'];
+        const lulc2008 = [290.09, 434.33, 1407.8, 195.45, 176.38, 24.53];
+        const lulc2016 = [337.42, 211.71, 1349.49, 334.37, 279.89, 15.77];
+
+        // Data for Hydro-Geomorphic Chart (Table 3)
+        const hydroLabels = ['Cut-off meander', 'Meander scars', 'Oxbow lakes', 'Paleochannels', 'Water bodies'];
+        const hydro2008 = [0.95, 3.70, 6.78, 24.13, 17.46];
+        const hydro2016 = [0.86, 3.83, 5.23, 15.34, 8.98];
+
+        // Data for DTWL Trend Chart (Approximation from Figure 6)
+        const dtwlYears = [2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016];
+        const dtwlData = {
+            '<5 mbgl': [50, 20, 20, 10, 10, 10, 5, 5, 5],
+            '5-10 mbgl': [500, 300, 250, 150, 100, 100, 80, 70, 60],
+            '10-15 mbgl': [1000, 1200, 1300, 1400, 1450, 1300, 1100, 900, 750],
+            '15-20 mbgl': [200, 250, 300, 350, 400, 450, 500, 550, 600],
+            '20-25 mbgl': [50, 80, 100, 150, 180, 200, 250, 300, 350],
+            '25-30 mbgl': [20, 30, 40, 50, 60, 70, 80, 90, 100],
+            '30-35 mbgl': [10, 10, 15, 20, 25, 30, 35, 40, 45],
+            '>35 mbgl': [1, 2, 2, 2, 2, 2, 3, 3, 4]
+        };
+
+        // Chart Colors
+        const colors = {
+            blue: 'rgba(59, 130, 246, 0.8)', // Tailwind blue-500
+            green: 'rgba(16, 185, 129, 0.8)', // Tailwind green-500
+            red: 'rgba(239, 68, 68, 0.8)', // Tailwind red-500
+            orange: 'rgba(249, 115, 22, 0.8)', // Tailwind orange-500
+            purple: 'rgba(139, 92, 246, 0.8)', // Tailwind purple-500
+            teal: 'rgba(20, 184, 166, 0.8)', // Tailwind teal-500
+            yellow: 'rgba(251, 191, 36, 0.8)', // Tailwind yellow-500
+            pink: 'rgba(236, 72, 153, 0.8)', // Tailwind pink-500
+            gray: 'rgba(107, 114, 128, 0.8)' // Tailwind gray-500
+        };
+
+        // LULC Chart
+        new Chart(document.getElementById('lulcChart'), {
+            type: 'bar',
+            data: {
+                labels: lulcLabels,
+                datasets: [
+                    {
+                        label: 'Area in 2008 (km²)',
+                        data: lulc2008,
+                        backgroundColor: colors.blue,
+                        borderColor: colors.blue,
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Area in 2016 (km²)',
+                        data: lulc2016,
+                        backgroundColor: colors.green,
+                        borderColor: colors.green,
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Area (km²)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'LULC Class'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Comparison of Land Use/Land Cover Areas (2008 vs 2016)'
+                    }
+                }
+            }
+        });
+
+        // Hydro-Geomorphic Chart
+        new Chart(document.getElementById('hydroGeomorphicChart'), {
+            type: 'bar',
+            data: {
+                labels: hydroLabels,
+                datasets: [
+                    {
+                        label: 'Area in 2008 (km²)',
+                        data: hydro2008,
+                        backgroundColor: colors.orange,
+                        borderColor: colors.orange,
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Area in 2016 (km²)',
+                        data: hydro2016,
+                        backgroundColor: colors.purple,
+                        borderColor: colors.purple,
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Area (km²)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Hydro-Geomorphic Feature'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Changes in Hydro-Geomorphic Feature Areas (2008 vs 2016)'
+                    }
+                }
+            }
+        });
+
+        // DTWL Trend Chart (Stacked Bar)
+        const dtwlDatasets = Object.keys(dtwlData).map((label, index) => {
+            const backgroundColors = [
+                'rgba(240, 99, 132, 0.8)', // Deepest red
+                'rgba(255, 159, 64, 0.8)', // Orange
+                'rgba(255, 205, 86, 0.8)', // Yellow
+                'rgba(75, 192, 192, 0.8)', // Green-teal
+                'rgba(54, 162, 235, 0.8)', // Blue
+                'rgba(153, 102, 255, 0.8)', // Purple
+                'rgba(201, 203, 207, 0.8)', // Gray
+                'rgba(99, 255, 132, 0.8)' // Lightest green
+            ];
+            return {
+                label: label,
+                data: dtwlData[label],
+                backgroundColor: backgroundColors[index % backgroundColors.length],
+                borderColor: backgroundColors[index % backgroundColors.length],
+                borderWidth: 1
+            };
+        });
+
+        new Chart(document.getElementById('dtwlTrendChart'), {
+            type: 'bar',
+            data: {
+                labels: dtwlYears,
+                datasets: dtwlDatasets
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Year'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Area (km²)'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Pre-Monsoon Groundwater Depth to Water Level Area Trend (2008-2016)'
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

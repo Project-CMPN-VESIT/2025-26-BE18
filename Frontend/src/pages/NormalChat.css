@@ -1,0 +1,437 @@
+/* Use the same CSS as your ChatbotInterface.css */
+.chatbot-container {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Background Styling */
+.background-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Chat Toggle Button */
+.chat-toggle-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 50;
+  background-color: #2563eb;
+  color: white;
+  padding: 16px;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.chat-toggle-btn:hover {
+  background-color: #1d4ed8 !important;
+  transform: scale(1.05);
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4) !important;
+}
+
+/* Chat Interface */
+.chat-interface {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  z-index: 40;
+  display: flex;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: -10px 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.chat-closed {
+  transform: translateX(100%);
+}
+
+.chat-open {
+  transform: translateX(0);
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: white;
+  border-right: 1px solid #e5e7eb;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.sidebar-closed {
+  width: 0;
+}
+
+.sidebar-open {
+  width: 256px;
+}
+
+/* Loading Animation */
+.loading-dots {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.loading-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #2563eb;
+  animation: pulse-loading 1.5s ease-in-out infinite;
+}
+
+.loading-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes pulse-loading {
+  0%, 60%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Message Animation */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-animation {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+/* Card Hover Effect */
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15) !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Download Button Styling */
+.download-btn {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.download-btn:hover {
+  background: linear-gradient(135deg, #059669, #047857);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.download-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+}
+
+/* Mode Switcher */
+.mode-switcher {
+  display: flex;
+  background-color: #e5e7eb;
+  padding: 8px;
+  border-radius: 8px;
+  margin: 12px;
+  gap: 8px;
+}
+
+.mode-switcher button {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.mode-switcher button.active {
+  background-color: #2563eb;
+  color: white;
+}
+
+/* Coordinates Input */
+.coordinates-input {
+  display: flex;
+  gap: 8px;
+}
+
+.coordinates-input input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+}
+
+/* Responsive Design */
+@media (min-width: 1024px) {
+  .chat-toggle-btn {
+    display: none !important;
+  }
+
+  .chat-interface {
+    transform: translateX(0) !important;
+    width: 450px;
+  }
+
+  .chat-open,
+  .chat-closed {
+    transform: translateX(0) !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .chat-interface {
+    width: 100vw;
+    max-width: 450px;
+  }
+
+  .sidebar {
+    position: absolute;
+    z-index: 1000;
+    height: 100%;
+  }
+
+  .chat-interface > div:last-child {
+    max-width: 450px;
+  }
+}
+
+@media (max-width: 640px) {
+  .chat-interface {
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  .chat-interface > div:last-child {
+    width: 100vw;
+    max-width: 100vw;
+  }
+
+  .sidebar-open {
+    width: 280px;
+  }
+
+  .prompt-cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  .download-btn {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .chat-toggle-btn {
+    bottom: 16px;
+    right: 16px;
+    padding: 12px;
+  }
+
+  .sidebar-open {
+    width: 250px;
+  }
+}
+
+/* Scrollbar Styling */
+.sidebar::-webkit-scrollbar,
+div[style*="overflowY: auto"]::-webkit-scrollbar,
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track,
+div[style*="overflowY: auto"]::-webkit-scrollbar-track,
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.sidebar::-webkit-scrollbar-thumb,
+div[style*="overflowY: auto"]::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover,
+div[style*="overflowY: auto"]::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Smooth Transitions */
+.chat-interface,
+.sidebar {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Focus States */
+textarea:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+  outline: none !important;
+}
+
+button:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Input Area Improvements */
+.input-area {
+  background: linear-gradient(to top, #ffffff, #f8fafc);
+  border-top: 1px solid #e2e8f0;
+}
+
+.input-textarea {
+  background: white;
+  border: 2px solid #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.input-textarea:hover {
+  border-color: #cbd5e1;
+}
+
+.input-textarea:focus {
+  border-color: #2563eb !important;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+}
+
+/* Send Button Improvements */
+.send-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  transition: all 0.2s ease;
+}
+
+.send-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+  transform: scale(1.05);
+}
+
+.send-btn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* Message Bubble Improvements */
+.message-bubble {
+  backdrop-filter: blur(10px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-message {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+.bot-message {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e5e7eb;
+}
+
+/* PDF Generation Status */
+.pdf-generating {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.pdf-generating::after {
+  content: " (Generating...)";
+  font-style: italic;
+}
+
+/* Welcome Cards Grid */
+.prompt-cards {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  width: 100%;
+  max-width: 320px;
+}
+
+@media (min-width: 400px) {
+  .prompt-cards {
+    max-width: 350px;
+  }
+}
+
+/* Dark mode support (optional) */
+@media (prefers-color-scheme: dark) {
+  .chatbot-container {
+    color-scheme: dark;
+  }
+
+  .background-overlay {
+    background: rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+  .message-animation,
+  .loading-dot,
+  .card-hover:hover {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .chat-toggle-btn,
+  .sidebar,
+  .input-area {
+    display: none !important;
+  }
+
+  .chat-interface {
+    position: static;
+    width: 100%;
+    height: auto;
+  }
+}

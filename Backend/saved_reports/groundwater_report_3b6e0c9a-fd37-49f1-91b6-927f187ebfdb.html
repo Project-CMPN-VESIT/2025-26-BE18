@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groundwater Analysis for Shirol</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        /* Dark mode styles for the body and main containers */
+        body {
+            @apply bg-gray-900 text-gray-100;
+        }
+        .container {
+            @apply bg-gray-800 shadow-lg rounded-lg p-6 my-8;
+        }
+        h1, h2, h3 {
+            @apply text-gray-50 font-bold;
+        }
+        table {
+            @apply min-w-full divide-y divide-gray-700;
+        }
+        th, td {
+            @apply px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider;
+        }
+        tbody tr {
+            @apply bg-gray-800 hover:bg-gray-700;
+        }
+        tbody tr:nth-child(odd) {
+            @apply bg-gray-800;
+        }
+        tbody tr:nth-child(even) {
+            @apply bg-gray-800;
+        }
+        .text-blue-400 { color: #60a5fa; } /* Tailwind blue-400 equivalent */
+        .text-green-400 { color: #4ade80; } /* Tailwind green-400 equivalent */
+        .text-red-400 { color: #f87171; }   /* Tailwind red-400 equivalent */
+
+        /* Custom styles for Chart.js tooltips in dark mode */
+        .chartjs-tooltip {
+            background: #333 !important;
+            color: #eee !important;
+            border: 1px solid #555 !important;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased p-4">
+
+    <div class="max-w-7xl mx-auto container">
+        <header class="mb-8">
+            <h1 class="text-4xl text-center mb-2">Groundwater Level Analysis: Shirol</h1>
+            <p class="text-center text-gray-400">Understanding Groundwater Trends for Sustainable Management</p>
+        </header>
+
+        <section class="mb-8">
+            <h2 class="text-2xl mb-4">Executive Summary</h2>
+            <p class="text-gray-300 leading-relaxed">
+                This analysis examines the groundwater situation in Shirol based on data from 2016-17 to 2024-25.
+                The key metrics observed are groundwater <strong>recharge</strong> (water entering the ground)
+                and <strong>draft</strong> (water extracted from the ground). The net balance (recharge minus draft)
+                gives us an indication of the overall change in groundwater storage.
+                Shirol has consistently been categorized as "safe" in terms of groundwater availability.
+                While there was a significant drop in net groundwater balance between 2016-17 and 2019-20,
+                the subsequent years show a relatively stable to slightly increasing trend in net balance.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl mb-4">Key Insights</h2>
+            <ul class="list-disc list-inside text-gray-300 space-y-2">
+                <li><strong>Safe Category:</strong> Shirol has been consistently categorized as 'safe', indicating that groundwater extraction is within sustainable limits relative to recharge.</li>
+                <li><strong>Initial Decline:</strong> A notable decrease in net groundwater balance occurred between 2016-17 and 2019-20, largely due to a significant reduction in reported rainfall and a corresponding, though smaller, reduction in draft.</li>
+                <li><strong>Recent Stability/Slight Increase:</strong> From 2019-20 onwards, the net groundwater balance has shown a trend of minor fluctuations but a slight overall increase, suggesting a period of relative stability or cautious recovery after the initial drop.</li>
+                <li><strong>Recharge & Draft Balance:</strong> Annual recharge values have remained relatively stable from 2019-20, hovering around 11,400 to 11,500 units. Similarly, draft levels have also stabilized around 4,100 to 4,200 units.</li>
+                <li><strong>Prediction for 2025-26:</strong> Based on the observed trends, the net groundwater balance for Shirol is predicted to be approximately <strong>7297 units</strong>, maintaining its 'safe' status.</li>
+            </ul>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl mb-4">Groundwater Level Trends (Net Balance)</h2>
+            <p class="text-gray-300 mb-4">
+                The chart below illustrates the trend of groundwater recharge, draft, and the net balance (recharge minus draft) over the years in Shirol. A higher net balance generally indicates more groundwater being available or stored.
+                Note: "Groundwater level" is represented here by the "Net Groundwater Balance," which is the difference between total groundwater recharge and total groundwater draft. This indicates whether the overall groundwater storage is increasing or decreasing.
+            </p>
+            <div class="bg-gray-700 p-4 rounded-lg">
+                <canvas id="groundwaterChart"></canvas>
+            </div>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl mb-4">Year-wise Data Breakdown</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-700 rounded-lg overflow-hidden">
+                    <thead class="bg-gray-700">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Year</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Rainfall</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Groundwater Recharge</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Groundwater Draft</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Net Groundwater Balance (Recharge - Draft)</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider">Category</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-700" id="dataRows">
+                        <!-- Data rows will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-gray-400 text-sm mt-4">
+                *Note: Groundwater Recharge and Draft units are in Cubic Hectometer (Ha-m) or similar volume units, indicating the total volume of water.
+                Some years are missing from the provided data, which may affect long-term trend accuracy.
+            </p>
+        </section>
+
+        <section class="mb-8">
+            <h2 class="text-2xl mb-4">Future Prediction (2025-26)</h2>
+            <p class="text-gray-300 leading-relaxed mb-2">
+                Based on the observed trends from the available data, the average annual change in the net groundwater balance has been calculated.
+                Projecting this trend for the next year (2025-26), we estimate the net groundwater balance for Shirol to be:
+            </p>
+            <div class="bg-gray-700 p-4 rounded-lg text-center text-3xl font-bold text-blue-400">
+                Predicted Net Groundwater Balance (2025-26): <span id="predictedValue">Calculating...</span> units
+            </div>
+            <p class="text-gray-400 text-sm mt-4">
+                <strong>Disclaimer:</strong> This is an approximate prediction based on historical data trends. Actual groundwater levels can be influenced by many factors such as monsoon variability, changes in water consumption patterns, new irrigation projects, and environmental policies. Therefore, this prediction should be used for general understanding and planning, not as a definitive forecast.
+            </p>
+        </section>
+
+        <footer class="text-center text-gray-500 text-sm mt-8">
+            <p>&copy; 2023 Groundwater Analysis. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script>
+        const rawData =
+        [{"year": "2016-17", "data": {"locationName": "SHIROL", "color": null, "locUUID": "fac67d7e-defd-4176-be0e-6d2e4c32de8b", "rainfall": 8435.201091736166, "recharge": {"total": {"total": 11019.842382394905, "non_command": 11019.842382394905}}, "loss": null, "draft": {"total": {"total": 9995.518422797079, "non_command": 2539.5246989444977}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 53273.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 53273.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "fac67d7e-defd-4176-be0e-6d2e4c32de8b", "draftData": {"total": {"total": 9995.518422797079, "non_command": 2539.5246989444977}}, "rechargeData": {"total": {"total": 11019.842382394905, "non_command": 11019.842382394905}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2019-20", "data": {"locationName": "SHIROL", "color": null, "locUUID": "fac67d7e-defd-4176-be0e-6d2e4c32de8b", "rainfall": 392.7138437857827, "recharge": {"total": {"total": 11465.777323290153, "non_command": 11465.777323290153}}, "loss": null, "draft": {"total": {"total": 4159.791381459564, "non_command": 4159.791381459564}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 53273.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 53273.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "fac67d7e-defd-4176-be0e-6d2e4c32de8b", "draftData": {"total": {"total": 4159.791381459564, "non_command": 4159.791381459564}}, "rechargeData": {"total": {"total": 11465.777323290153, "non_command": 11465.777323290153}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2021-22", "data": {"locationName": "SHIROL", "color": null, "locUUID": "50768b97-34b4-4274-9179-e09bd0c42fee", "rainfall": 392.7138437857827, "recharge": {"total": {"total": 11470.153890334108, "non_command": 11470.153890334108}}, "loss": null, "draft": {"total": {"total": 4167.944874256049, "non_command": 4167.944874256049}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 53273.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 53273.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "50768b97-34b4-4274-9179-e09bd0c42fee", "draftData": {"total": {"total": 4167.944874256049, "non_command": 4167.944874256049}}, "rechargeData": {"total": {"total": 11470.153890334108, "non_command": 11470.153890334108}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2022-23", "data": {"locationName": "SHIROL", "color": null, "locUUID": "50768b97-34b4-4274-9179-e09bd0c42fee", "rainfall": 392.7138437857827, "recharge": {"total": {"total": 11479.927978502725, "non_command": 11479.927978502725}}, "loss": null, "draft": {"total": {"total": 4170.345400639054, "non_command": 4170.345400639054}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 53273.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 53273.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "50768b97-34b4-4274-9179-e09bd0c42fee", "draftData": {"total": {"total": 4170.345400639054, "non_command": 4170.345400639054}}, "rechargeData": {"total": {"total": 11479.927978502725, "non_command": 11479.927978502725}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2023-24", "data": {"locationName": "Shirol", "color": null, "locUUID": "5c715792-db2c-40fd-976b-1c3f5c1c3a9f", "rainfall": 392.7138437857827, "recharge": {"total": {"total": 11467.233650773614, "non_command": 11467.233650773614}}, "loss": null, "draft": {"total": {"total": 4170.9174468520905, "non_command": 4170.9174468520905}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 53273.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 53273.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "5c715792-db2c-40fd-976b-1c3f5c1c3a9f", "draftData": {"total": {"total": 4170.9174468520905, "non_command": 4170.9174468520905}}, "rechargeData": {"total": {"total": 11467.233650773614, "non_command": 11467.233650773614}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2024-25", "data": {"locationName": "Shirol", "color": null, "locUUID": "f93b3733-02e3-4a38-9db7-7a3b49517867", "rainfall": 392.7138437857827, "recharge": {"total": {"total": 11476.700318438643, "non_command": 11476.700318438643}}, "loss": null, "draft": {"total": {"total": 4172.856951826573, "non_command": 4172.856951826573}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 53273.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 53273.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "f93b3733-02e3-4a38-9db7-7a3b49517867", "draftData": {"total": {"total": 4172.856951826573, "non_command": 4172.856951826573}}, "rechargeData": {"total": {"total": 11476.700318438643, "non_command": 11476.700318438643}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}];
+
+        const processedData = rawData.map(item => {
+            const yearStart = parseInt(item.year.split('-')[0]);
+            const recharge = item.data.recharge.total.total;
+            const draft = item.data.draft.total.total;
+            const rainfall = item.data.rainfall;
+            const category = item.data.category.total;
+            const netBalance = recharge - draft;
+
+            return {
+                originalYear: item.year,
+                year: yearStart,
+                rainfall: rainfall,
+                recharge: recharge,
+                draft: draft,
+                netBalance: netBalance,
+                category: category
+            };
+        }).sort((a, b) => a.year - b.year); // Sort by year for trend analysis
+
+        // Populate table
+        const dataRows = document.getElementById('dataRows');
+        processedData.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap">${item.originalYear}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${item.rainfall.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-green-400">${item.recharge.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-red-400">${item.draft.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-blue-400">${item.netBalance.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap">${item.category}</td>
+            `;
+            dataRows.appendChild(row);
+        });
+
+        // Chart.js Data
+        const years = processedData.map(item => item.originalYear);
+        const rechargeData = processedData.map(item => item.recharge);
+        const draftData = processedData.map(item => item.draft);
+        const netBalanceData = processedData.map(item => item.netBalance);
+
+        const ctx = document.getElementById('groundwaterChart').getContext('2d');
+        const groundwaterChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: years,
+                datasets: [
+                    {
+                        label: 'Groundwater Recharge',
+                        data: rechargeData,
+                        borderColor: 'rgb(75, 192, 192)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        tension: 0.3,
+                        fill: false,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Groundwater Draft',
+                        data: draftData,
+                        borderColor: 'rgb(255, 99, 132)',
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        tension: 0.3,
+                        fill: false,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Net Groundwater Balance (Recharge - Draft)',
+                        data: netBalanceData,
+                        borderColor: 'rgb(54, 162, 235)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        tension: 0.3,
+                        fill: true,
+                        yAxisID: 'y'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Groundwater Recharge, Draft, and Net Balance Over Years',
+                        color: '#E5E7EB' // Tailwind gray-200
+                    },
+                    legend: {
+                        labels: {
+                            color: '#D1D5DB' // Tailwind gray-300
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += context.parsed.y.toFixed(2) + ' units';
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Year',
+                            color: '#D1D5DB'
+                        },
+                        ticks: {
+                            color: '#D1D5DB'
+                        },
+                        grid: {
+                            color: '#4B5563' // Tailwind gray-600
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Volume (units)',
+                            color: '#D1D5DB'
+                        },
+                        ticks: {
+                            color: '#D1D5DB'
+                        },
+                        grid: {
+                            color: '#4B5563' // Tailwind gray-600
+                        }
+                    }
+                }
+            }
+        });
+
+        // Prediction for next year (2025-26)
+        function predictNextYearNetBalance(data) {
+            if (data.length < 2) {
+                return null; // Not enough data to predict
+            }
+
+            let totalChange = 0;
+            let countChanges = 0;
+
+            for (let i = 0; i < data.length - 1; i++) {
+                const currentYear = data[i].year;
+                const nextYear = data[i+1].year;
+                const currentNetBalance = data[i].netBalance;
+                const nextNetBalance = data[i+1].netBalance;
+
+                // Only calculate change if years are consecutive or almost
+                // For simplicity for layman, we'll calculate average year-over-year change
+                // considering the actual year difference.
+                const yearDiff = nextYear - currentYear;
+                if (yearDiff > 0) {
+                    totalChange += (nextNetBalance - currentNetBalance) / yearDiff;
+                    countChanges++;
+                }
+            }
+
+            if (countChanges === 0) {
+                // If no valid year-over-year changes could be calculated
+                return data[data.length - 1].netBalance; // Default to last known value
+            }
+
+            const averageAnnualChange = totalChange / countChanges;
+            const lastKnownNetBalance = data[data.length - 1].netBalance;
+            const predictedValue = lastKnownNetBalance + averageAnnualChange;
+
+            return predictedValue;
+        }
+
+        const predictedNextYearValue = predictNextYearNetBalance(processedData);
+        document.getElementById('predictedValue').textContent = predictedNextYearValue !== null ? predictedNextYearValue.toFixed(2) : "N/A (Insufficient Data)";
+    </script>
+</body>
+</html>

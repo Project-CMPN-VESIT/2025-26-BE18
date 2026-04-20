@@ -1,0 +1,23 @@
+{
+    "metadata": {
+        "latitude": 19.238458,
+        "longitude": 73.137248,
+        "analysis_time": "2025-12-20T16:06:35.362045Z"
+    },
+    "climate": {
+        "rainfall_mm": 100,
+        "elevation_m": 13.0,
+        "slope_deg": 15.0
+    },
+    "land_cover": {
+        "code": null,
+        "type": "Unknown",
+        "recharge_impact": "High"
+    },
+    "lithology": {
+        "code": 5,
+        "type": "Basalt (Deccan Trap)",
+        "groundwater_behavior": "Moderate groundwater potential in fractured zones",
+        "data_note": "Lithology derived from GSI Geology 2M map. This represents regional conditions (~5\u201310 km scale), not site-specific borewell guarantees."
+    }
+}

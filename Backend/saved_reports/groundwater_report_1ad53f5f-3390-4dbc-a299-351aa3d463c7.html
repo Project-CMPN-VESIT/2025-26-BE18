@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shirol Groundwater Analysis</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <!-- Dark Mode Script -->
+    <script>
+        // On page load or when changing themes, best to add inline in `head` to avoid FOUC
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100 font-sans leading-normal tracking-normal transition-colors duration-200">
+
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+
+        <!-- Dark Mode Toggle -->
+        <div class="flex justify-end mb-6">
+            <button onclick="toggleDarkMode()" class="p-2 rounded-md bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium transition-colors duration-200">
+                Toggle Dark Mode
+            </button>
+        </div>
+
+        <header class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-extrabold text-blue-700 dark:text-blue-400 mb-4">Groundwater Analysis for Shirol</h1>
+            <p class="text-lg text-gray-700 dark:text-gray-300">An easy-to-understand overview of Shirol's groundwater status and future outlook.</p>
+        </header>
+
+        <!-- Executive Summary -->
+        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Executive Summary</h2>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                The groundwater situation in Shirol has been consistently **"safe"** over the observed years, indicating a sustainable balance between the water naturally refilling the ground (recharge) and the amount being pumped out (draft). While there was a notable shift in rainfall and water usage patterns after 2016-17, the overall net availability of groundwater has remained stable and healthy.
+            </p>
+            <p class="text-gray-700 dark:text-gray-300">
+                **Key takeaway:** Shirol maintains a robust groundwater supply, significantly more than what is being extracted, ensuring a stable water resource for its needs.
+            </p>
+        </section>
+
+        <!-- Groundwater Status Explained -->
+        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Understanding Groundwater Status</h2>
+            <p class="text-gray-700 dark:text-gray-300 mb-2">
+                Groundwater refers to the water stored beneath the Earth's surface in soil pores and in the fractures of rock formations. Its level depends on two main factors:
+            </p>
+            <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4 ml-4">
+                <li class="mb-1">
+                    <strong>Recharge:</strong> This is the amount of water that naturally replenishes the underground reservoirs. It primarily comes from rainfall seeping into the ground, but can also include water from rivers, lakes, and irrigation.
+                </li>
+                <li class="mb-1">
+                    <strong>Draft:</strong> This is the total amount of groundwater being pumped out or withdrawn for various uses, such as farming, drinking, and industrial purposes.
+                </li>
+            </ul>
+            <p class="text-gray-700 dark:text-gray-300 mb-2">
+                The difference between Recharge and Draft tells us how healthy our groundwater system is.
+            </p>
+            <p class="text-gray-700 dark:text-gray-300">
+                <strong>Category "Safe":</strong> When the amount of water recharged into the ground is significantly more than what is being drawn out, the area is categorized as "safe." This means there's a good surplus of groundwater, ensuring long-term sustainability. Shirol consistently falls into this desirable category.
+            </p>
+        </section>
+
+        <!-- Year-wise Trend -->
+        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Year-wise Trend in Shirol</h2>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                Here's a look at how Shirol's groundwater levels have changed over the years. Please note that data might not be available for every single year.
+            </p>
+
+            <div class="overflow-x-auto mb-6">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 rounded-lg overflow-hidden">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Year</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Rainfall (units)</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Recharge (units)</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Draft (units)</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Net Availability (units)</th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Category</th>
+                        </tr>
+                    </thead>
+                    <tbody id="groundwater-table-body" class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                        <!-- Data will be inserted here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg mb-6">
+                <p class="text-sm text-gray-600 dark:text-gray-300">
+                    <strong class="font-semibold">Note on units:</strong> The data provided uses a consistent unit for recharge, draft, and rainfall volumes. For simplicity and consistency, we refer to these as "units".
+                </p>
+            </div>
+
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-3">Visual Trend</h3>
+            <div class="relative h-80">
+                <canvas id="groundwaterChart"></canvas>
+            </div>
+        </section>
+
+        <!-- Prediction -->
+        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Prediction for Next Year (2025-26)</h2>
+            <p class="text-gray-700 dark:text-gray-300 mb-4">
+                Based on the trends observed from 2019-20 to 2024-25, Shirol's groundwater situation appears remarkably stable.
+            </p>
+            <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 mb-4 ml-4">
+                <li><strong>Expected Category:</strong> We predict that Shirol will continue to be categorized as **"safe"** for the year 2025-26.</li>
+                <li><strong>Expected Recharge:</strong> Groundwater recharge is expected to remain stable, likely around **11,475 units**.</li>
+                <li><strong>Expected Draft:</strong> The amount of groundwater extracted is also expected to stay consistent, approximately around **4,175 units**.</li>
+                <li><strong>Expected Net Availability:</strong> This means the surplus groundwater (Net Availability) will likely remain strong, around **7,300 units**.</li>
+            </ul>
+            <p class="text-gray-700 dark:text-gray-300">
+                This prediction assumes similar environmental conditions (like rainfall) and water usage patterns continue. The consistent "safe" category is a positive indicator for the region's water security.
+            </p>
+        </section>
+
+        <!-- Key Insights -->
+        <section class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4">Key Insights</h2>
+            <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 ml-4">
+                <li class="mb-2">
+                    <strong>Consistent Safety:</strong> Shirol has consistently maintained a "safe" groundwater category, demonstrating a sustainable approach to water resource management.
+                </li>
+                <li class="mb-2">
+                    <strong>Stable Resource Management:</strong> After 2016-17, both groundwater recharge and draft levels stabilized, leading to a consistent and healthy net availability.
+                </li>
+                <li class="mb-2">
+                    <strong>Resilience to Rainfall Changes:</strong> Despite a significant drop in reported rainfall after 2016-17, the groundwater recharge remained high and stable, suggesting other significant recharge mechanisms or effective water conservation practices are at play.
+                </li>
+                <li class="mb-2">
+                    <strong>Positive Outlook:</strong> The current trends indicate a positive outlook for Shirol's groundwater resources in the foreseeable future, maintaining its "safe" status.
+                </li>
+            </ul>
+        </section>
+
+        <footer class="text-center text-gray-500 dark:text-gray-400 text-sm mt-10">
+            <p>&copy; 2024 Groundwater Analysis. All rights reserved.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        const rawData = [{"year": "2016-17", "data": {"locationName": "SHIROL", "color": null, "locUUID": "fac67d7e-defd-4176-be0e-6d2e4c32de8b", "rainfall": 8435.201091736166, "recharge": {"total": {"total": 11019.842382394905, "non_command": 11019.842382394905}}, "loss": null, "draft": {"total": {"total": 9995.518422797079, "non_command": 2539.5246989444977}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 53273.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 53273.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "fac67d7e-defd-4176-be0e-6d2e4c32de8b", "draftData": {"total": {"total": 9995.518422797079, "non_command": 2539.5246989444977}}, "rechargeData": {"total": {"total": 11019.842382394905, "non_command": 11019.842382394905}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2019-20", "data": {"locationName": "SHIROL", "color": null, "locUUID": "fac67d7e-defd-4176-be0e-6d2e4c32de8b", "rainfall": 392.7138437857827, "recharge": {"total": {"total": 11465.777323290153, "non_command": 11465.777323290153}}, "loss": null, "draft": {"total": {"total": 4159.791381459564, "non_command": 4159.791381459564}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 53273.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 53273.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "fac67d7e-defd-4176-be0e-6d2e4c32de8b", "draftData": {"total": {"total": 4159.791381459564, "non_command": 4159.791381459564}}, "rechargeData": {"total": {"total": 11465.777323290153, "non_command": 11465.777323290153}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2021-22", "data": {"locationName": "SHIROL", "color": null, "locUUID": "50768b97-34b4-4274-9179-e09bd0c42fee", "rainfall": 392.7138437857827, "recharge": {"total": {"total": 11470.153890334108, "non_command": 11470.153890334108}}, "loss": null, "draft": {"total": {"total": 4167.944874256049, "non_command": 4167.944874256049}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 53273.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 53273.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "50768b97-34b4-4274-9179-e09bd0c42fee", "draftData": {"total": {"total": 4167.944874256049, "non_command": 4167.944874256049}}, "rechargeData": {"total": {"total": 11470.153890334108, "non_command": 11470.153890334108}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2022-23", "data": {"locationName": "SHIROL", "color": null, "locUUID": "50768b97-34b4-4274-9179-e09bd0c42fee", "rainfall": 392.7138437857827, "recharge": {"total": {"total": 11479.927978502725, "non_command": 11479.927978502725}}, "loss": null, "draft": {"total": {"total": 4170.345400639054, "non_command": 4170.345400639054}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 53273.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 53273.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "50768b97-34b4-4274-9179-e09bd0c42fee", "draftData": {"total": {"total": 4170.345400639054, "non_command": 4170.345400639054}}, "rechargeData": {"total": {"total": 11479.927978502725, "non_command": 11479.927978502725}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2023-24", "data": {"locationName": "Shirol", "color": null, "locUUID": "5c715792-db2c-40fd-976b-1c3f5c1c3a9f", "rainfall": 392.7138437857827, "recharge": {"total": {"total": 11467.233650773614, "non_command": 11467.233650773614}}, "loss": null, "draft": {"total": {"total": 4170.9174468520905, "non_command": 4170.9174468520905}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 53273.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 53273.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "5c715792-db2c-40fd-976b-1c3f5c1c3a9f", "draftData": {"total": {"total": 4170.9174468520905, "non_command": 4170.9174468520905}}, "rechargeData": {"total": {"total": 11467.233650773614, "non_command": 11467.233650773614}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}, {"year": "2024-25", "data": {"locationName": "Shirol", "color": null, "locUUID": "f93b3733-02e3-4a38-9db7-7a3b49517867", "rainfall": 392.7138437857827, "recharge": {"total": {"total": 11476.700318438643, "non_command": 11476.700318438643}}, "loss": null, "draft": {"total": {"total": 4172.856951826573, "non_command": 4172.856951826573}}, "currAvailabilityForAllPurposes": null, "stage": null, "category": {"total": "safe", "non_command": "safe"}, "area": {"total": {"commandArea": 0.0, "nonCommandArea": 53273.0, "poorQualityArea": 0.0, "hillyArea": 0.0, "forestArea": 0.0, "totalArea": 53273.0, "pavedArea": 0.0, "unpavedArea": 0.0}}, "locationUUID": "f93b3733-02e3-4a38-9db7-7a3b49517867", "draftData": {"total": {"total": 4172.856951826573, "non_command": 4172.856951826573}}, "rechargeData": {"total": {"total": 11476.700318438643, "non_command": 11476.700318438643}}, "currentAvailabilityForAllPurposes": null, "stageOfExtraction": null}}];
+
+        const processedData = rawData.map(item => {
+            const recharge = item.data.recharge.total.total;
+            const draft = item.data.draft.total.total;
+            return {
+                year: item.year,
+                rainfall: item.data.rainfall,
+                recharge: recharge,
+                draft: draft,
+                netAvailability: recharge - draft,
+                category: item.data.category.total
+            };
+        });
+
+        // Populate table
+        const tableBody = document.getElementById('groundwater-table-body');
+        processedData.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">${row.year}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">${row.rainfall.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">${row.recharge.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">${row.draft.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold ${row.netAvailability > 0 ? 'text-green-600' : 'text-red-600'} dark:${row.netAvailability > 0 ? 'text-green-400' : 'text-red-400'}">${row.netAvailability.toFixed(2)}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-300">${row.category}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+
+        // Chart.js data preparation
+        const years = processedData.map(item => item.year);
+        const rechargeData = processedData.map(item => item.recharge);
+        const draftData = processedData.map(item => item.draft);
+        const netAvailabilityData = processedData.map(item => item.netAvailability);
+
+        const ctx = document.getElementById('groundwaterChart').getContext('2d');
+        const groundwaterChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: years,
+                datasets: [
+                    {
+                        label: 'Recharge (units)',
+                        data: rechargeData,
+                        backgroundColor: 'rgba(59, 130, 246, 0.8)', // Tailwind blue-500
+                        borderColor: 'rgba(59, 130, 246, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Draft (units)',
+                        data: draftData,
+                        backgroundColor: 'rgba(239, 68, 68, 0.8)', // Tailwind red-500
+                        borderColor: 'rgba(239, 68, 68, 1)',
+                        borderWidth: 1
+                    },
+                    {
+                        type: 'line', // Mixed chart type
+                        label: 'Net Availability (units)',
+                        data: netAvailabilityData,
+                        backgroundColor: 'rgba(16, 185, 129, 0.2)', // Tailwind green-500
+                        borderColor: 'rgba(16, 185, 129, 1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Groundwater Recharge, Draft, and Net Availability Over Years',
+                        color: document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#1F2937' // Dynamic title color
+                    },
+                    legend: {
+                        labels: {
+                            color: document.documentElement.classList.contains('dark') ? '#D1D5DB' : '#4B5563' // Dynamic legend color
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: false, // Make bars not stacked, but lines can overlay
+                        grid: {
+                            color: 'rgba(107, 114, 128, 0.2)' // Tailwind gray-500 for grid lines
+                        },
+                        ticks: {
+                            color: document.documentElement.classList.contains('dark') ? '#D1D5DB' : '#4B5563'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(107, 114, 128, 0.2)' // Tailwind gray-500 for grid lines
+                        },
+                        ticks: {
+                            color: document.documentElement.classList.contains('dark') ? '#D1D5DB' : '#4B5563'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Update chart colors on dark mode toggle
+        const toggleButton = document.querySelector('button[onclick="toggleDarkMode()"]');
+        toggleButton.addEventListener('click', () => {
+            const isDarkMode = document.documentElement.classList.contains('dark');
+            groundwaterChart.options.plugins.title.color = isDarkMode ? '#E5E7EB' : '#1F2937';
+            groundwaterChart.options.plugins.legend.labels.color = isDarkMode ? '#D1D5DB' : '#4B5563';
+            groundwaterChart.options.scales.x.ticks.color = isDarkMode ? '#D1D5DB' : '#4B5563';
+            groundwaterChart.options.scales.y.ticks.color = isDarkMode ? '#D1D5DB' : '#4B5563';
+            groundwaterChart.update();
+        });
+
+    </script>
+</body>
+</html>

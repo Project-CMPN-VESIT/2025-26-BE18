@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groundwater Sustainability Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1d4ed8', // Example primary color
+                        secondary: '#d97706', // Example secondary color
+                    }
+                }
+            },
+            darkMode: 'class', // Enable dark mode
+        }
+    </script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 p-6 md:p-10 font-sans">
+
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-4xl font-bold text-center mb-8 text-primary dark:text-blue-400">Groundwater Sustainability Analysis (2008-2016)</h1>
+        <p class="text-lg text-center text-gray-700 dark:text-gray-300 mb-12">
+            An analysis of long-term Land Use/Land Cover (LULC) changes and their impact on groundwater resources and hydro-geomorphic features in the Lucknow area of the Ganga plain, utilizing multi-temporal satellite and field survey data.
+        </p>
+
+        <!-- Executive Summary -->
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mb-8">
+            <h2 class="text-2xl font-semibold mb-4 text-primary dark:text-blue-400">Executive Summary</h2>
+            <p class="text-gray-700 dark:text-gray-300 leading-relaxed">
+                The study reveals significant transformations in the Lucknow area between 2008 and 2016, primarily driven by rapid urbanization, population growth, and extensive agricultural practices. Built-up land and open land/construction areas experienced substantial increases of 4.09% and 5.49% respectively, indicating a surge in development. Concurrently, vital natural resources suffered, with vegetation cover decreasing by 8.80%, agricultural land by 2.31%, and surface water bodies by 0.35%.
+            </p>
+            <p class="text-gray-700 dark:text-gray-300 leading-relaxed mt-3">
+                Hydro-geomorphic features, crucial for natural water storage and recharge, also showed a concerning decline. Features like paleochannels, oxbow lakes, and cut-off meanders saw considerable reductions in their area. This loss of permeable surfaces and natural water bodies has severely impacted groundwater recharge, leading to a noticeable depletion of groundwater levels across the region. Areas with deeper groundwater (>35 mbgl) expanded significantly, while shallower water zones (<5 mbgl) shrank. The strong positive correlation (R²=0.81) between LULC changes (especially urbanization) and groundwater level dynamics underscores the urgent need for sustainable water resource management and urban planning to mitigate these environmental impacts.
+            </p>
+        </div>
+
+        <!-- Key Action Items -->
+        <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 mb-12">
+            <h2 class="text-2xl font-semibold mb-4 text-primary dark:text-blue-400">Key Action Items</h2>
+            <ul class="list-disc list-inside text-gray-700 dark:text-gray-300 space-y-2">
+                <li>Prioritize sustainable urban planning to control haphazard expansion and protect natural recharge areas.</li>
+                <li>Implement measures for the rejuvenation and restoration of surface water bodies, including natural ponds, lakes, and streams.</li>
+                <li>Develop strategies to enhance natural infiltration and groundwater recharge, potentially through green infrastructure.</li>
+                <li>Monitor LULC changes and groundwater levels regularly using geospatial technologies to inform decision-making.</li>
+                <li>Promote water conservation and efficient water use practices in both agricultural and urban sectors to reduce reliance on groundwater.</li>
+                <li>Protect and restore hydro-geomorphic features like paleochannels and oxbow lakes, recognizing their role in water resource management.</li>
+            </ul>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- LULC Composition 2016 (Donut Chart) -->
+            <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+                <h3 class="text-xl font-semibold mb-4 text-primary dark:text-blue-400">Land Use/Land Cover Composition (2016)</h3>
+                <div class="relative h-64 w-full">
+                    <canvas id="lulcDonutChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Hydro-geomorphic Feature Area Comparison (Grouped Bar Chart) -->
+            <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6">
+                <h3 class="text-xl font-semibold mb-4 text-primary dark:text-blue-400">Hydro-geomorphic Feature Area (2008 vs 2016)</h3>
+                <div class="relative h-64 w-full">
+                    <canvas id="hydroGeomorphicBarChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Groundwater Level Area Trend (Line Chart) -->
+            <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 md:col-span-2">
+                <h3 class="text-xl font-semibold mb-4 text-primary dark:text-blue-400">Pre-Monsoon Groundwater Level Trend (Area in km²)</h3>
+                <div class="relative h-80 w-full">
+                    <canvas id="groundwaterLineChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Groundwater Level Distribution by Area (Grouped Bar Chart) -->
+            <div class="bg-white dark:bg-gray-800 shadow-lg rounded-lg p-6 md:col-span-2">
+                <h3 class="text-xl font-semibold mb-4 text-primary dark:text-blue-400">Groundwater Level Distribution by Area (2008 vs 2016)</h3>
+                <div class="relative h-80 w-full">
+                    <canvas id="groundwaterDistributionChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Data Extraction from the document
+        const lulc2016Labels = ['Forest/orchard', 'Vegetation', 'Agricultural land', 'Open land/construction land', 'Built-up area', 'Water bodies'];
+        const lulc2016Data = [337.42, 211.71, 1349.49, 334.37, 279.89, 15.77];
+
+        const hydroGeoLabels = ['Cut-off meander', 'Meander scars', 'Oxbow lakes', 'Paleochannels', 'Water bodies'];
+        const hydroGeo2008Data = [0.95, 3.70, 6.78, 24.13, 17.46];
+        const hydroGeo2016Data = [0.86, 3.83, 5.23, 15.34, 8.98];
+
+        const years = ['2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016'];
+        // Approximated from Figure 6
+        const gwDeepeningArea = [1, 1, 1, 1, 1.5, 1.8, 1.9, 2, 2]; // Area >35 mbgl
+        const gwShallowArea = [58, 40, 35, 25, 20, 18, 25, 30, 29]; // Area <5 mbgl
+
+        const gwDepthLabels = ['<5 mbgl', '5-10 mbgl', '10-15 mbgl', '15-20 mbgl', '20-25 mbgl', '25-30 mbgl', '30-35 mbgl', '>35 mbgl'];
+        const gwDepth2008Area = [58, 504, 1569, 281, 62, 38, 15, 1];
+        const gwDepth2016Area = [29, 645, 1362, 320, 109, 43, 18, 2];
+
+        // Chart.js Configuration Functions
+        function createDonutChart() {
+            const ctx = document.getElementById('lulcDonutChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: lulc2016Labels,
+                    datasets: [{
+                        label: 'LULC Area (km²) 2016',
+                        data: lulc2016Data,
+                        backgroundColor: [
+                            '#34D399', '#FCD34D', '#60A5FA', '#F87171', '#A78BFA', '#4B5563'
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: 'rgb(209 213 219)' // Tailwind gray-300
+                            }
+                        },
+                        title: {
+                            display: false,
+                            text: 'LULC Composition 2016'
+                        }
+                    }
+                }
+            });
+        }
+
+        function createHydroGeomorphicBarChart() {
+            const ctx = document.getElementById('hydroGeomorphicBarChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: hydroGeoLabels,
+                    datasets: [{
+                        label: '2008 Area (km²)',
+                        data: hydroGeo2008Data,
+                        backgroundColor: '#60A5FA', // Tailwind blue-400
+                        borderColor: '#3B82F6',
+                        borderWidth: 1
+                    },
+                    {
+                        label: '2016 Area (km²)',
+                        data: hydroGeo2016Data,
+                        backgroundColor: '#F87171', // Tailwind red-400
+                        borderColor: '#EF4444',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgb(209 213 219)' // Tailwind gray-300
+                            }
+                        },
+                        title: {
+                            display: false,
+                            text: 'Hydro-geomorphic Feature Area Comparison'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: false,
+                            ticks: {
+                                color: 'rgb(209 213 219)'
+                            }
+                        },
+                        y: {
+                            stacked: false,
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Area (km²)',
+                                color: 'rgb(209 213 219)'
+                            },
+                            ticks: {
+                                color: 'rgb(209 213 219)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createGroundwaterLineChart() {
+            const ctx = document.getElementById('groundwaterLineChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: 'Area with DTWL >35 mbgl (km²)',
+                        data: gwDeepeningArea,
+                        borderColor: '#EF4444', // Tailwind red-500
+                        backgroundColor: 'rgba(239, 68, 68, 0.2)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Area with DTWL <5 mbgl (km²)',
+                        data: gwShallowArea,
+                        borderColor: '#22C55E', // Tailwind green-500
+                        backgroundColor: 'rgba(34, 197, 94, 0.2)',
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgb(209 213 219)'
+                            }
+                        },
+                        title: {
+                            display: false,
+                            text: 'Groundwater Level Trend'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: 'rgb(209 213 219)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Area (km²)',
+                                color: 'rgb(209 213 219)'
+                            },
+                            ticks: {
+                                color: 'rgb(209 213 219)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createGroundwaterDistributionChart() {
+            const ctx = document.getElementById('groundwaterDistributionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: gwDepthLabels,
+                    datasets: [{
+                        label: '2008 Area (km²)',
+                        data: gwDepth2008Area,
+                        backgroundColor: '#3B82F6', // Tailwind blue-500
+                        borderColor: '#2563EB',
+                        borderWidth: 1
+                    },
+                    {
+                        label: '2016 Area (km²)',
+                        data: gwDepth2016Area,
+                        backgroundColor: '#A78BFA', // Tailwind purple-400
+                        borderColor: '#8B5CF6',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'rgb(209 213 219)'
+                            }
+                        },
+                        title: {
+                            display: false,
+                            text: 'Groundwater Level Distribution by Area'
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: false,
+                            ticks: {
+                                color: 'rgb(209 213 219)'
+                            }
+                        },
+                        y: {
+                            stacked: false,
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Area (km²)',
+                                color: 'rgb(209 213 219)'
+                            },
+                            ticks: {
+                                color: 'rgb(209 213 219)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Initialize Charts on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            createDonutChart();
+            createHydroGeomorphicBarChart();
+            createGroundwaterLineChart();
+            createGroundwaterDistributionChart();
+        });
+    </script>
+</body>
+</html>

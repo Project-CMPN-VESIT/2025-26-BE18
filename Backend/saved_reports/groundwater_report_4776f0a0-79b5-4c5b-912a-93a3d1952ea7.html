@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groundwater Level Analysis - Bhusawal</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Chart.js CDN (included as per task, though not used without data) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <style>
+        /* Custom dark mode setup for demonstration purposes if 'dark' class is present on html */
+        body {
+            @apply bg-gray-100 text-gray-900;
+        }
+        .dark body {
+            @apply bg-gray-900 text-gray-100;
+        }
+        .card {
+            @apply bg-white dark:bg-gray-800 shadow-md rounded-lg p-6;
+        }
+        .header {
+            @apply text-3xl font-bold text-gray-900 dark:text-white mb-6;
+        }
+        .sub-header {
+            @apply text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4;
+        }
+        .paragraph {
+            @apply text-gray-700 dark:text-gray-300 mb-4 leading-relaxed;
+        }
+        .bullet-point {
+            @apply text-gray-700 dark:text-gray-300 mb-2;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="container mx-auto max-w-4xl">
+        <header class="text-center mb-10">
+            <h1 class="header">Groundwater Level Analysis - Bhusawal</h1>
+        </header>
+
+        <main>
+            <section class="card mb-8">
+                <h2 class="sub-header">Executive Summary: No Data Available</h2>
+                <p class="paragraph">
+                    Unfortunately, I don't have any groundwater level data for Bhusawal right now. This means I can't tell you about the current status, how it has changed over the years, or predict future levels.
+                </p>
+                <p class="paragraph">
+                    To perform a useful analysis and provide insights, I would need specific groundwater level measurements, ideally collected over several years for Bhusawal.
+                </p>
+            </section>
+
+            <section class="card">
+                <h2 class="sub-header">Key Insights (What We Need to Know)</h2>
+                <p class="paragraph">
+                    Since there's no data provided for Bhusawal, I cannot offer any specific insights into its groundwater situation. However, here's what we typically look for when analyzing groundwater levels:
+                </p>
+                <ul class="list-disc list-inside space-y-2 paragraph">
+                    <li class="bullet-point">
+                        <strong>Current Status:</strong> Is the groundwater level shallow (easily accessible) or deep (harder to reach)?
+                    </li>
+                    <li class="bullet-point">
+                        <strong>Historical Trend:</strong> Has the groundwater level been rising, falling, or staying stable over the years? A falling trend might indicate over-extraction or reduced rainfall.
+                    </li>
+                    <li class="bullet-point">
+                        <strong>Seasonality:</strong> Does the level change significantly between monsoon and dry seasons?
+                    </li>
+                    <li class="bullet-point">
+                        <strong>Future Prediction:</strong> Based on past trends, what might the groundwater level look like in the near future?
+                    </li>
+                    <li class="bullet-point">
+                        <strong>Potential Causes:</strong> What factors (rainfall, irrigation, population growth, industrial use) might be influencing these changes?
+                    </li>
+                </ul>
+                <p class="paragraph mt-6">
+                    Once you provide groundwater level data (e.g., depth to water table in meters below ground level for different years), I can generate charts, explain trends, and offer a more detailed analysis tailored for you.
+                </p>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groundwater Sustainability Dashboard</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+</head>
+<body class="bg-gray-900 text-gray-100 font-sans p-6">
+
+    <div class="container mx-auto">
+        <h1 class="text-4xl font-bold text-center mb-8 text-blue-400">Groundwater Sustainability Analysis: Lucknow</h1>
+
+        <!-- Executive Summary -->
+        <section class="mb-10 p-6 bg-gray-800 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-semibold mb-4 text-blue-300">Executive Summary</h2>
+            <p class="text-gray-300 leading-relaxed">
+                This analysis investigates the long-term impact of land use/land cover (LULC) changes on surface and groundwater resources in the Lucknow area (Ganga plain) between 2008 and 2016, utilizing multi-temporal satellite and field survey data.
+                The study reveals significant anthropogenic pressures driving substantial changes, including rapid urbanization, agricultural expansion, and depletion of natural water bodies and hydro-geomorphic features.
+                Key findings indicate a substantial increase in built-up land (4.09%) and open/construction land (5.49%), paralleled by an 8.80% decrease in vegetation cover, a 2.31% decrease in agricultural land, and a 0.35% reduction in surface water bodies.
+                Hydro-geomorphic features crucial for groundwater recharge, such as oxbow lakes and paleochannels, have also seen significant reductions (e.g., paleochannels decreased from 24.13 km² to 15.34 km²).
+                Consequently, groundwater levels have shown an alarming declining trend, with an increasing area reporting deeper water levels (e.g., the area with groundwater depth >30 meters below ground level significantly increased, from 16 km² in 2008 to 45 km² in 2016).
+                This rapid depletion is strongly correlated with LULC changes, highlighting an urgent need for sustainable water resource management strategies.
+            </p>
+        </section>
+
+        <!-- Key Action Items -->
+        <section class="mb-10 p-6 bg-gray-800 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-semibold mb-4 text-blue-300">Key Action Items</h2>
+            <ul class="list-disc list-inside text-gray-300 space-y-2">
+                <li>Prioritize sustainable urban planning to curb unchecked expansion of impervious surfaces, which hinder groundwater recharge.</li>
+                <li>Implement aggressive reforestation and green cover initiatives to enhance natural infiltration and groundwater recharge, countering the 8.80% vegetation loss.</li>
+                <li>Develop and enforce policies for the protection and rejuvenation of critical hydro-geomorphic features (e.g., paleochannels, oxbow lakes, surface water bodies) that have shown significant decline.</li>
+                <li>Promote efficient water use practices in agriculture to reduce reliance on groundwater extraction, especially given the continuous decrease in agricultural land.</li>
+                <li>Establish a robust groundwater monitoring network and integrated database to inform evidence-based decision-making for water resource management.</li>
+                <li>Investigate alternative water sources and rainwater harvesting to supplement groundwater resources and mitigate depletion.</li>
+            </ul>
+        </section>
+
+        <!-- Charts Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+
+            <!-- Chart 1: LULC Area Comparison -->
+            <div class="p-6 bg-gray-800 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-4 text-blue-200">Land Use/Land Cover Area Comparison (2008 vs 2016)</h3>
+                <div class="relative h-80 w-full">
+                    <canvas id="lulcChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 2: Hydro-geomorphic Features Area Comparison -->
+            <div class="p-6 bg-gray-800 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-4 text-blue-200">Hydro-geomorphic Features Area Comparison (2008 vs 2016)</h3>
+                <div class="relative h-80 w-full">
+                    <canvas id="hydroGeoChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 3: Groundwater Depth Level Distribution -->
+            <div class="p-6 bg-gray-800 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-4 text-blue-200">Groundwater Depth Level Distribution (Area in km²)</h3>
+                <div class="relative h-80 w-full">
+                    <canvas id="groundwaterDepthChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Chart 4: Pre-Monsoon Deeper Groundwater Levels Trend -->
+            <div class="p-6 bg-gray-800 rounded-lg shadow-lg">
+                <h3 class="text-xl font-semibold mb-4 text-blue-200">Trend of Increasing Deeper Groundwater Levels (Pre-monsoon)</h3>
+                <div class="relative h-80 w-full">
+                    <canvas id="deepGroundwaterTrendChart"></canvas>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Chart Data
+        const lulcData = {
+            labels: ['Forest/orchard', 'Vegetation', 'Agricultural land', 'Open land/construction land', 'Built-up area', 'Water bodies'],
+            datasets: [
+                {
+                    label: 'Area 2008 (km²)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1,
+                    data: [290.09, 434.33, 1407.8, 195.45, 176.38, 24.53]
+                },
+                {
+                    label: 'Area 2016 (km²)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.6)',
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderWidth: 1,
+                    data: [337.42, 211.71, 1349.49, 334.37, 279.89, 15.77]
+                }
+            ]
+        };
+
+        const hydroGeoData = {
+            labels: ['Cut-off meander', 'Meander scars', 'Oxbow lakes', 'Paleochannels', 'Water bodies'],
+            datasets: [
+                {
+                    label: 'Area 2008 (km²)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1,
+                    data: [0.95, 3.70, 6.78, 24.13, 17.46]
+                },
+                {
+                    label: 'Area 2016 (km²)',
+                    backgroundColor: 'rgba(255, 159, 64, 0.6)',
+                    borderColor: 'rgba(255, 159, 64, 1)',
+                    borderWidth: 1,
+                    data: [0.86, 3.83, 5.23, 15.34, 8.98]
+                }
+            ]
+        };
+
+        const groundwaterDepthData = {
+            labels: ['<5 mbgl', '5-10 mbgl', '10-15 mbgl', '15-20 mbgl', '20-25 mbgl', '25-30 mbgl', '30-35 mbgl', '>35 mbgl'],
+            datasets: [
+                {
+                    label: 'Area 2008 (km²)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1,
+                    data: [58, 504, 1569, 281, 62, 38, 15, 1]
+                },
+                {
+                    label: 'Area 2016 (km²)',
+                    backgroundColor: 'rgba(255, 206, 86, 0.6)',
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 1,
+                    data: [29, 645, 1362, 320, 109, 43, 18, 2]
+                }
+            ]
+        };
+
+        const deepGroundwaterTrendData = {
+            labels: ['2008', '2009', '2010', '2011', '2012', '2013', '2014', '2015', '2016'],
+            datasets: [
+                {
+                    label: 'Area with Deeper Groundwater (>30 mbgl) (km²)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    pointBackgroundColor: 'rgba(255, 99, 132, 1)',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: 'rgba(255, 99, 132, 1)',
+                    fill: true,
+                    tension: 0.3,
+                    data: [16, 19, 21, 26, 29, 31, 36.5, 40, 45] // Sum of 30-35 mbgl and >35 mbgl from Figure 6 visual estimation and Table 4 for start/end
+                }
+            ]
+        };
+
+        // Chart.js Configuration Options (common for all charts)
+        const chartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    labels: {
+                        color: 'rgb(209, 213, 219)' // Tailwind gray-300
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: 'rgb(209, 213, 219)'
+                    }
+                },
+                y: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: 'rgb(209, 213, 219)'
+                    }
+                }
+            }
+        };
+
+        // Render Charts
+        document.addEventListener('DOMContentLoaded', () => {
+            new Chart(document.getElementById('lulcChart'), {
+                type: 'bar',
+                data: lulcData,
+                options: chartOptions
+            });
+
+            new Chart(document.getElementById('hydroGeoChart'), {
+                type: 'bar',
+                data: hydroGeoData,
+                options: chartOptions
+            });
+
+            new Chart(document.getElementById('groundwaterDepthChart'), {
+                type: 'bar',
+                data: groundwaterDepthData,
+                options: {
+                    ...chartOptions, // Spread common options
+                    scales: {
+                        x: {
+                            ...chartOptions.scales.x,
+                            stacked: false // Ensure bars are not stacked by default, but grouped
+                        },
+                        y: {
+                            ...chartOptions.scales.y,
+                            stacked: false
+                        }
+                    }
+                }
+            });
+
+            new Chart(document.getElementById('deepGroundwaterTrendChart'), {
+                type: 'line',
+                data: deepGroundwaterTrendData,
+                options: chartOptions
+            });
+        });
+    </script>
+</body>
+</html>

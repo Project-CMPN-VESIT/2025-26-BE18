@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groundwater Status Report: Shirol</title>
+    <!-- Tailwind CSS CDN -->
+    <link href="https://cdn.tailwindcss.com" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Set initial dark mode based on system preference or saved preference
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+
+        // Function to toggle dark mode
+        function toggleDarkMode() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+            // Update chart colors immediately after toggling theme
+            updateChartColors();
+        }
+
+        // Placeholder for chart instances, will be defined in window.onload
+        let rechargeChart, draftChart;
+
+        // Function to update chart label colors based on theme
+        function updateChartColors() {
+            const labelColor = document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#1F2937'; // gray-100 vs gray-900
+            if (rechargeChart) {
+                rechargeChart.options.plugins.legend.labels.color = labelColor;
+                rechargeChart.update();
+            }
+            if (draftChart) {
+                draftChart.options.plugins.legend.labels.color = labelColor;
+                draftChart.update();
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans leading-normal tracking-normal p-4 min-h-screen">
+
+    <div class="container mx-auto p-4 md:p-8 bg-white dark:bg-gray-800 rounded-lg shadow-xl my-8">
+
+        <!-- Dark Mode Toggle -->
+        <div class="flex justify-end mb-4">
+            <button onclick="toggleDarkMode()" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200">
+                <svg class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Toggle dark mode</title><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M3 12H2m15.325-4.575l.707-.707M5.975 18.075l-.707.707M18.075 5.975l.707-.707M5.275 5.275l-.707-.707"></path></svg>
+                <svg class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><title>Toggle light mode</title><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
+
+        <h1 class="text-3xl md:text-4xl font-bold text-center mb-6 text-blue-700 dark:text-blue-400">Groundwater Status Report: Shirol</h1>
+
+        <!-- Executive Summary -->
+        <div class="bg-blue-50 dark:bg-blue-900 border border-blue-200 dark:border-blue-700 rounded-lg p-6 mb-8 shadow-md">
+            <h2 class="text-2xl font-semibold mb-4 text-blue-800 dark:text-blue-200">Executive Summary</h2>
+            <p class="mb-3 text-lg">
+                Good news! The groundwater situation in **Shirol** is currently **SAFE**. This means there's plenty of groundwater available, and we are using it responsibly.
+            </p>
+            <p class="mb-3 text-lg">
+                Only about **38.6%** of the available groundwater is currently being used, leaving a large surplus for future needs. This healthy balance is thanks to good natural recharge from sources like rainfall and agriculture.
+            </p>
+            <p class="text-lg font-bold text-green-700 dark:text-green-400 flex items-center">
+                <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                **Based on this data, you can likely dig a borewell in Shirol.**
+            </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-8 mb-8">
+            <!-- Key Insights -->
+            <div class="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 shadow-md">
+                <h2 class="text-2xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Key Insights</h2>
+                <ul class="list-disc list-inside space-y-2 text-lg">
+                    <li>**Groundwater Category:** The region is categorized as **"SAFE"**. This is the best category, indicating that groundwater resources are in good health and can be developed further.</li>
+                    <li>**Current Usage (Stage of Extraction):** We are only extracting about **38.6%** of the total available groundwater. This low usage rate is excellent and ensures long-term sustainability.</li>
+                    <li>**Abundant Availability:** Shirol has a total groundwater availability of **10,819.52 Million Cubic Meters (MCM)** per year.</li>
+                    <li>**Future Potential:** A significant **6,646.66 MCM** is available for future use, showing a healthy reserve even after current extraction.</li>
+                    <li>**Strong Recharge:** The groundwater system is well-replenished by natural processes like rainfall and water returning from agricultural activities, contributing to its "safe" status.</li>
+                </ul>
+            </div>
+
+            <!-- Overall Status Card -->
+            <div class="bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 rounded-lg p-6 shadow-md flex flex-col justify-center items-center text-center">
+                <h2 class="text-2xl font-semibold mb-4 text-green-800 dark:text-green-200">Overall Groundwater Status</h2>
+                <div class="flex items-center justify-center space-x-4">
+                    <svg class="w-16 h-16 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <div>
+                        <p class="text-5xl font-bold text-green-700 dark:text-green-300">SAFE</p>
+                        <p class="text-lg text-green-600 dark:text-green-400">Category</p>
+                    </div>
+                </div>
+                <p class="mt-4 text-xl text-green-700 dark:text-green-300">Stage of Extraction: <span class="font-bold">38.57%</span></p>
+                <p class="mt-2 text-md text-green-600 dark:text-green-400">(This means less than half of the annually replenishable water is being used.)</p>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+            <!-- Data Cards -->
+            <div class="bg-purple-50 dark:bg-purple-900 border border-purple-200 dark:border-purple-700 rounded-lg p-6 shadow-md text-center">
+                <h3 class="text-xl font-semibold mb-3 text-purple-800 dark:text-purple-200">Total Groundwater Available</h3>
+                <p class="text-4xl font-bold text-purple-700 dark:text-purple-300">10,819.52 MCM</p>
+                <p class="text-md text-purple-600 dark:text-purple-400">(Million Cubic Meters per year)</p>
+            </div>
+            <div class="bg-yellow-50 dark:bg-yellow-900 border border-yellow-200 dark:border-yellow-700 rounded-lg p-6 shadow-md text-center">
+                <h3 class="text-xl font-semibold mb-3 text-yellow-800 dark:text-yellow-200">Availability for Future Use</h3>
+                <p class="text-4xl font-bold text-yellow-700 dark:text-yellow-300">6,646.66 MCM</p>
+                <p class="text-md text-yellow-600 dark:text-yellow-400">(Water remaining after current usage)</p>
+            </div>
+            <div class="bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 rounded-lg p-6 shadow-md text-center">
+                <h3 class="text-xl font-semibold mb-3 text-red-800 dark:text-red-200">Total Groundwater Extracted (Draft)</h3>
+                <p class="text-4xl font-bold text-red-700 dark:text-red-300">4,172.86 MCM</p>
+                <p class="text-md text-red-600 dark:text-red-400">(Water used annually)</p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 text-center">How Groundwater is Replenished (Recharge)</h2>
+                <canvas id="rechargeChart"></canvas>
+                <p class="text-sm mt-4 text-gray-600 dark:text-gray-400 text-center">This chart shows the different ways groundwater is naturally refilled, like from rainfall and water used in agriculture.</p>
+            </div>
+            <div class="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 text-center">How Groundwater is Used (Draft)</h2>
+                <canvas id="draftChart"></canvas>
+                <p class="text-sm mt-4 text-gray-600 dark:text-gray-400 text-center">This chart breaks down who is using the extracted groundwater in Shirol (e.g., farms, homes, industries).</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Raw data provided by the analyst
+        const rawData = {"result": [{"locationName": "Shirol", "totalGWAvailability": {"total": 10819.520001444782, "non_command": 10819.520001444782}, "stageOfExtraction": {"total": 38.5678565340177, "non_command": 38.5678565340177}, "category": {"total": "safe", "non_command": "safe"}, "rechargeData": {"agriculture": {"total": 8686.833752450868, "non_command": 8686.833752450868}, "rainfall": {"total": 2465.0637316303278, "non_command": 2465.0637316303278}, "total": {"total": 11476.700318438643, "non_command": 11476.700318438643}, "surface_irrigation": {"total": 7625.971558204269, "non_command": 7625.971558204269}, "gw_irrigation": {"total": 1060.8621942465986, "non_command": 1060.8621942465986}, "water_body": {"total": 93.17, "non_command": 93.17}, "artificial_structure": {"total": 231.62349806351023, "non_command": 231.62349806351023}}, "draftData": {"agriculture": {"total": 3980.462872667039, "non_command": 3980.462872667039}, "domestic": {"total": 192.40374286559592, "non_command": 192.40374286559592}, "total": {"total": 4172.856951826573, "non_command": 4172.856951826573}, "industry": {"total": 0.0, "non_command": 0.0}}, "availabilityForFutureUse": {"total": 6646.66304961821, "non_command": 6646.66304961821}, "gwlevelData": null}]}
+        const shirolData = rawData.result[0];
+
+        window.onload = function() {
+            const initialLabelColor = document.documentElement.classList.contains('dark') ? '#E5E7EB' : '#1F2937';
+
+            // Recharge Chart
+            const rechargeCtx = document.getElementById('rechargeChart').getContext('2d');
+            rechargeChart = new Chart(rechargeCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Agriculture Return Flow', 'Rainfall', 'Surface Water Irrigation Return Flow', 'Groundwater Irrigation Return Flow', 'Water Bodies', 'Artificial Recharge Structures'],
+                    datasets: [{
+                        data: [
+                            shirolData.rechargeData.agriculture.total,
+                            shirolData.rechargeData.rainfall.total,
+                            shirolData.rechargeData.surface_irrigation.total,
+                            shirolData.rechargeData.gw_irrigation.total,
+                            shirolData.rechargeData.water_body.total,
+                            shirolData.rechargeData.artificial_structure.total
+                        ],
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.8)', // Green-ish for agriculture
+                            'rgba(54, 162, 235, 0.8)', // Blue for rainfall
+                            'rgba(153, 102, 255, 0.8)', // Purple for surface irrigation
+                            'rgba(255, 159, 64, 0.8)',  // Orange for GW irrigation
+                            'rgba(255, 205, 86, 0.8)',  // Yellow for water bodies
+                            'rgba(201, 203, 207, 0.8)'  // Grey for artificial structures
+                        ],
+                        borderColor: [
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                            'rgba(255, 205, 86, 1)',
+                            'rgba(201, 203, 207, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: initialLabelColor
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed.toFixed(2) + ' MCM';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Draft Chart
+            const draftCtx = document.getElementById('draftChart').getContext('2d');
+            draftChart = new Chart(draftCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Agriculture', 'Domestic Use', 'Industry'],
+                    datasets: [{
+                        data: [
+                            shirolData.draftData.agriculture.total,
+                            shirolData.draftData.domestic.total,
+                            shirolData.draftData.industry.total
+                        ],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.8)', // Red for agriculture (high usage)
+                            'rgba(54, 162, 235, 0.8)', // Blue for domestic
+                            'rgba(255, 205, 86, 0.8)'  // Yellow for industry
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 205, 86, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: initialLabelColor
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed.toFixed(2) + ' MCM';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            // Ensure charts colors are correct on initial load
+            updateChartColors();
+        };
+    </script>
+</body>
+</html>

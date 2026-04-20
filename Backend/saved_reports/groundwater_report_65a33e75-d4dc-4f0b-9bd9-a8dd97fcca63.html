@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groundwater Analysis for Shirol</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom scrollbar for better aesthetics in dark mode */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 5px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #333;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 5px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #555;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        .dark ::-webkit-scrollbar-thumb:hover {
+            background: #777;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900 transition-colors duration-300 dark:bg-gray-900 dark:text-gray-100 min-h-screen flex flex-col">
+
+    <div class="container mx-auto p-4 md:p-8 flex-grow">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-blue-700 dark:text-blue-400 mb-4 md:mb-0">
+                Groundwater Status: Shirol
+            </h1>
+            <button id="darkModeToggle" class="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors duration-300 flex items-center shadow-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+                </svg>
+                Toggle Dark Mode
+            </button>
+        </header>
+
+        <!-- Executive Summary -->
+        <section class="mb-8 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4 border-b pb-2 border-gray-300 dark:border-gray-600">Executive Summary</h2>
+            <p class="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+                The groundwater situation in **Shirol** is currently **healthy and stable**. The area is categorized as 'safe', meaning the amount of water extracted from underground is well within sustainable limits compared to how much it gets refilled. This ensures a reliable water supply for the community and its activities without overstressing the natural resources.
+            </p>
+        </section>
+
+        <!-- Key Insights -->
+        <section class="mb-8 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4 border-b pb-2 border-gray-300 dark:border-gray-600">Key Insights</h2>
+            <ul class="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300">
+                <li>
+                    <strong>Safe Category:</strong> Shirol falls into the 'safe' category, indicating a good balance between groundwater recharge and extraction.
+                </li>
+                <li>
+                    <strong>Low Extraction Rate:</strong> Only about <strong>38.57%</strong> of the available groundwater is currently being extracted. This is significantly below the threshold for concern, highlighting sustainable usage.
+                </li>
+                <li>
+                    <strong>Ample Future Availability:</strong> There's a substantial amount of groundwater (approximately <strong>6646.66 units</strong>) available for future use, suggesting good long-term water security.
+                </li>
+                <li>
+                    <strong>Diverse Recharge Sources:</strong> Groundwater levels are replenished through various sources, with significant contributions from agricultural practices (return flow from irrigation) and natural rainfall. Surface irrigation also plays a major role in recharging the underground water.
+                </li>
+                <li>
+                    <strong>Agricultural Dependence:</strong> Agriculture is both a major contributor to groundwater recharge (through irrigation return flow) and the primary user of groundwater in the region.
+                </li>
+                <li>
+                    <strong>No Historical Data:</strong> Unfortunately, specific year-on-year groundwater level data was not provided. Therefore, we cannot show past trends or predict future groundwater levels. This analysis is based on the most recent available data.
+                </li>
+            </ul>
+        </section>
+
+        <!-- Data Dashboard -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+
+            <!-- Card: Overall Status -->
+            <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center text-center">
+                <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-3">Overall Groundwater Status</h3>
+                <div class="text-5xl font-extrabold text-green-600 dark:text-green-400 mb-2">SAFE</div>
+                <p class="text-lg text-gray-600 dark:text-gray-400">
+                    Category: <span class="font-bold text-green-600 dark:text-green-400">Safe</span>
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-500">
+                    This means the extraction is well below the replenishment rate.
+                </p>
+            </div>
+
+            <!-- Card: Stage of Extraction -->
+            <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center text-center">
+                <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-3">Stage of Groundwater Extraction</h3>
+                <div class="text-5xl font-extrabold text-blue-600 dark:text-blue-400 mb-2">38.57%</div>
+                <p class="text-lg text-gray-600 dark:text-gray-400">
+                    <span class="font-bold">Total Extraction / Total Availability</span>
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-500">
+                    A low percentage indicates sustainable use.
+                </p>
+            </div>
+
+            <!-- Card: Total Groundwater Availability -->
+            <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col items-center justify-center text-center">
+                <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-3">Total Groundwater Availability</h3>
+                <div class="text-5xl font-extrabold text-teal-600 dark:text-teal-400 mb-2">10819.52</div>
+                <p class="text-lg text-gray-600 dark:text-gray-400">
+                    Units of replenishable groundwater.
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-500">
+                    This is the total estimated amount of water available underground.
+                </p>
+            </div>
+
+            <!-- Card: Availability for Future Use -->
+            <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 md:col-span-full lg:col-span-1 flex flex-col items-center justify-center text-center">
+                <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-3">Availability for Future Use</h3>
+                <div class="text-5xl font-extrabold text-purple-600 dark:text-purple-400 mb-2">6646.66</div>
+                <p class="text-lg text-gray-600 dark:text-gray-400">
+                    Units available after current extraction.
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-500">
+                    A healthy reserve ensures water security for coming years.
+                </p>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            <!-- Chart: Groundwater Recharge Sources -->
+            <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col">
+                <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-4 text-center">How Groundwater is Replenished (Recharge)</h3>
+                <div class="flex-grow flex items-center justify-center">
+                    <canvas id="rechargeChart" class="max-h-[350px]"></canvas>
+                </div>
+                <p class="text-sm text-gray-500 dark:text-gray-500 text-center mt-4">
+                    This chart shows the different ways water enters the ground to replenish the groundwater supply.
+                </p>
+            </div>
+
+            <!-- Chart: Groundwater Usage (Draft) -->
+            <div class="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col">
+                <h3 class="text-xl font-semibold text-gray-700 dark:text-gray-300 mb-4 text-center">How Groundwater is Used (Draft)</h3>
+                <div class="flex-grow flex items-center justify-center">
+                    <canvas id="draftChart" class="max-h-[350px]"></canvas>
+                </div>
+                <p class="text-sm text-gray-500 dark:text-gray-500 text-center mt-4">
+                    This chart illustrates the primary sectors consuming groundwater in Shirol.
+                </p>
+            </div>
+        </div>
+
+        <!-- Recharge and Draft Details Table -->
+        <section class="mb-8 p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700">
+            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200 mb-4 border-b pb-2 border-gray-300 dark:border-gray-600">Detailed Groundwater Balance</h2>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
+                        <tr>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                Metric
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                Value (Units)
+                            </th>
+                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                                Description
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                        <!-- Recharge Data -->
+                        <tr>
+                            <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-700">
+                                Groundwater Recharge (Inflow)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">Total Recharge</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 dark:text-blue-400 font-bold">11476.70</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Total water refilling the underground storage.</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">Agriculture (Return Flow)</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">8686.83</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Water from agricultural irrigation seeping back into the ground.</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">Rainfall</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">2465.06</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Direct recharge from precipitation.</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">Surface Irrigation</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">7625.97</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Water from canals and surface sources seeping into the ground.</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">Groundwater Irrigation Return</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">1060.86</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Recharge from groundwater used for irrigation.</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">Water Body Seepage</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">93.17</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Water seeping from rivers, lakes, and ponds.</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">Artificial Structures</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">231.62</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Recharge from check dams, percolation tanks, etc.</td>
+                        </tr>
+
+                        <!-- Draft Data -->
+                        <tr>
+                            <td colspan="3" class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900 dark:text-gray-100 bg-gray-100 dark:bg-gray-700">
+                                Groundwater Draft (Outflow)
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">Total Draft</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 dark:text-red-400 font-bold">4172.86</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Total water extracted from underground.</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">Agriculture</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">3980.46</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Water drawn for irrigation purposes.</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">Domestic Use</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">192.40</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Water used for household purposes.</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">Industry</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">0.00</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">Water used by industries.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-sm text-gray-500 dark:text-gray-500 mt-4">
+                *All values are in estimated units, likely Hectare-meters (Ham) or Million Cubic Meters (MCM), indicating volume.
+            </p>
+        </section>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="p-4 text-center text-gray-600 dark:text-gray-400 text-sm bg-gray-200 dark:bg-gray-800 mt-8">
+        <p>&copy; 2023 Groundwater Analysis. Data provided for Shirol region.</p>
+        <p>Disclaimer: This analysis is based on the provided single-point data and does not include historical trends or future predictions due to data limitations.</p>
+    </footer>
+
+    <script>
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const htmlElement = document.documentElement;
+
+        // Check for saved theme preference or system preference
+        const isDarkMode = localStorage.getItem('darkMode') === 'true' || 
+                           (localStorage.getItem('darkMode') === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (isDarkMode) {
+            htmlElement.classList.add('dark');
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            htmlElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', htmlElement.classList.contains('dark'));
+            // Re-render charts to update colors
+            updateChartColors();
+        });
+
+        // Chart Data (from provided JSON)
+        const data = {"result": [{"locationName": "Shirol", "totalGWAvailability": {"total": 10819.520001444782, "non_command": 10819.520001444782}, "stageOfExtraction": {"total": 38.5678565340177, "non_command": 38.5678565340177}, "category": {"total": "safe", "non_command": "safe"}, "rechargeData": {"agriculture": {"total": 8686.833752450868, "non_command": 8686.833752450868}, "rainfall": {"total": 2465.0637316303278, "non_command": 2465.0637316303278}, "total": {"total": 11476.700318438643, "non_command": 11476.700318438643}, "surface_irrigation": {"total": 7625.971558204269, "non_command": 7625.971558204269}, "gw_irrigation": {"total": 1060.8621942465986, "non_command": 1060.8621942465986}, "water_body": {"total": 93.17, "non_command": 93.17}, "artificial_structure": {"total": 231.62349806351023, "non_command": 231.62349806351023}}, "draftData": {"agriculture": {"total": 3980.462872667039, "non_command": 3980.462872667039}, "domestic": {"total": 192.40374286559592, "non_command": 192.40374286559592}, "total": {"total": 4172.856951826573, "non_command": 4172.856951826573}, "industry": {"total": 0.0, "non_command": 0.0}}, "availabilityForFutureUse": {"total": 6646.66304961821, "non_command": 6646.66304961821}, "gwlevelData": null}]};
+        const shirolData = data.result[0];
+
+        const getChartColors = () => {
+            const isDark = htmlElement.classList.contains('dark');
+            return {
+                primary: isDark ? '#60A5FA' : '#3B82F6', // blue-400 / blue-600
+                secondary: isDark ? '#34D399' : '#10B981', // green-400 / green-600
+                tertiary: isDark ? '#FACC15' : '#EAB308', // yellow-300 / yellow-500
+                quaternary: isDark ? '#A78BFA' : '#8B5CF6', // purple-400 / purple-600
+                fifth: isDark ? '#F472B6' : '#EC4899', // pink-300 / pink-500
+                sixth: isDark ? '#FB923C' : '#F97316', // orange-300 / orange-500
+                seventh: isDark ? '#CBD5E1' : '#64748B', // slate-300 / slate-500
+                text: isDark ? '#E2E8F0' : '#1A202C', // slate-200 / gray-900
+                grid: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)',
+                tooltipBg: isDark ? 'rgba(31,41,55,0.9)' : 'rgba(255,255,255,0.9)',
+                tooltipBorder: isDark ? 'rgba(75,85,99,1)' : 'rgba(229,231,235,1)'
+            };
+        };
+
+        let rechargeChart, draftChart;
+
+        const createCharts = () => {
+            const colors = getChartColors();
+
+            // Recharge Chart
+            const rechargeCtx = document.getElementById('rechargeChart').getContext('2d');
+            const rechargeLabels = ['Agriculture', 'Rainfall', 'Surface Irrigation', 'GW Irrigation Return', 'Water Body', 'Artificial Structure'];
+            const rechargeValues = [
+                shirolData.rechargeData.agriculture.total,
+                shirolData.rechargeData.rainfall.total,
+                shirolData.rechargeData.surface_irrigation.total,
+                shirolData.rechargeData.gw_irrigation.total,
+                shirolData.rechargeData.water_body.total,
+                shirolData.rechargeData.artificial_structure.total
+            ];
+
+            rechargeChart = new Chart(rechargeCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: rechargeLabels,
+                    datasets: [{
+                        data: rechargeValues,
+                        backgroundColor: [
+                            colors.primary,
+                            colors.secondary,
+                            colors.tertiary,
+                            colors.quaternary,
+                            colors.fifth,
+                            colors.sixth
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: colors.text
+                            }
+                        },
+                        title: {
+                            display: false,
+                        },
+                        tooltip: {
+                            backgroundColor: colors.tooltipBg,
+                            borderColor: colors.tooltipBorder,
+                            borderWidth: 1,
+                            titleColor: colors.text,
+                            bodyColor: colors.text
+                        }
+                    }
+                }
+            });
+
+            // Draft Chart
+            const draftCtx = document.getElementById('draftChart').getContext('2d');
+            const draftLabels = ['Agriculture', 'Domestic', 'Industry'];
+            const draftValues = [
+                shirolData.draftData.agriculture.total,
+                shirolData.draftData.domestic.total,
+                shirolData.draftData.industry.total
+            ];
+
+            draftChart = new Chart(draftCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: draftLabels,
+                    datasets: [{
+                        data: draftValues,
+                        backgroundColor: [
+                            colors.primary,
+                            colors.quaternary,
+                            colors.fifth
+                        ],
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: colors.text
+                            }
+                        },
+                        title: {
+                            display: false,
+                        },
+                        tooltip: {
+                            backgroundColor: colors.tooltipBg,
+                            borderColor: colors.tooltipBorder,
+                            borderWidth: 1,
+                            titleColor: colors.text,
+                            bodyColor: colors.text
+                        }
+                    }
+                }
+            });
+        };
+
+        const updateChartColors = () => {
+            if (rechargeChart) rechargeChart.destroy();
+            if (draftChart) draftChart.destroy();
+            createCharts();
+        };
+
+        document.addEventListener('DOMContentLoaded', createCharts);
+
+    </script>
+</body>
+</html>
